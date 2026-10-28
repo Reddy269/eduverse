@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instructor Dashboard · Eduverse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;600&family=Unbounded:wght@600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/loginstyle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/instructorstyle.css' %}">
+</head>
+<body data-instructor-id="{{ instructor_id }}">
+
+  <header class="topbar">
+    <a href="#" class="brand">Eduverse</a>
+    <nav class="topbar__nav" aria-label="Primary">
+      <a href="#" aria-current="page">Dashboard</a>
+      <a href="#">My courses</a>
+      <a href="#">Questions</a>
+      <a href="#">Settings</a>
+      <span class="avatar keep" aria-hidden="true">I</span>
+    </nav>
+  </header>
+
+  <div class="dashboard">
+    <main>
+      <section class="page-head">
+        <div>
+          <h1>Welcome back, instructor</h1>
+          <p>Build a course, add lessons and questions, then publish when it's ready.</p>
+        </div>
+        <button type="button" class="btn-primary" id="open-draft">
+          <span class="plus" aria-hidden="true">+</span> Draft a course
+        </button>
+      </section>
+
+      <section class="stats" aria-label="Overview">
+        <div class="stat">
+          <p class="stat__label">Drafts</p>
+          <p class="stat__value">0</p>
+        </div>
+        <div class="stat">
+          <p class="stat__label">Completed</p>
+          <p class="stat__value">0</p>
+        </div>
+        <div class="stat">
+          <p class="stat__label">Questions</p>
+          <p class="stat__value">0</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Your courses</h2>
+        </div>
+        <div class="empty">
+          <strong>No courses yet</strong>
+          Start a draft and it will appear here.
+        </div>
+      </section>
+    </main>
+
+    <aside class="sidebar" aria-label="Content files">
+      <div class="sidebar__card">
+        <button type="button" class="btn-outline" id="open-content">
+          + Add content file
+        </button>
+      </div>
+
+      <div class="sidebar__card">
+        <h2 class="sidebar__title">Content files</h2>
+        <ul class="file-list" id="file-list"></ul>
+        <p class="file-empty" id="file-empty">No content files added yet.</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Course draft popup -->
+  <div class="overlay" id="draft-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="draft-title">
+      <div class="modal__header">
+        <h2 id="draft-title">Draft a new course</h2>
+        <button type="button" class="modal__close" data-close aria-label="Close">&times;</button>
+      </div>
+
+      <form id="draft-form" class="draft-form" novalidate>
+        <div class="auth-form__field">
+          <label for="course-title">Course title</label>
+          <input id="course-title" name="title" type="text" placeholder="e.g. Python for Beginners">
+        </div>
+
+        <div class="auth-form__field">
+          <label for="duration">Estimated duration (hours)</label>
+          <input id="duration" name="duration" type="number" min="0.5" step="0.5" placeholder="e.g. 12">
+        </div>
+
+        <div class="auth-form__field">
+          <label for="overview">Short overview</label>
+          <textarea id="overview" name="overview" placeholder="Describe what this course covers"></textarea>
+        </div>
+
+        <div class="auth-form__field">
+          <span class="field-label">Categories</span>
+          <div id="category-list" class="category-list"></div>
+          <p class="hint">Format: Root &gt; Level 2 &gt; Level 3. Root and Level 2 are required.</p>
+        </div>
+
+        <p id="form-error" class="modal__error" role="alert" hidden></p>
+
+        <div class="modal__footer">
+          <button type="button" class="modal__cancel" data-close>Cancel</button>
+          <button type="submit" class="btn-primary">Save draft</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Content file popup -->
+  <div class="overlay" id="content-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="content-title">
+      <div class="modal__header">
+        <h2 id="content-title">Add a content file</h2>
+        <button type="button" class="modal__close" data-close aria-label="Close">&times;</button>
+      </div>
+
+      <form id="content-form" class="draft-form" novalidate>
+        <fieldset class="auth-form__field" style="border:0; padding:0; margin:0;">
+          <legend class="field-label" style="margin-bottom:0.5rem;">Content type</legend>
+          <div class="type-options">
+            <label class="type-option">
+              <input type="radio" name="content-type" value="mp4">
+              <span>MP4 video</span>
+            </label>
+            <label class="type-option">
+              <input type="radio" name="content-type" value="pdf">
+              <span>PDF document</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="auth-form__field">
+          <label for="content-file">File</label>
+          <input id="content-file" name="file" type="file" accept="video/mp4,application/pdf">
+          <p class="hint" id="content-hint">Choose a content type first.</p>
+        </div>
+
+        <p id="content-error" class="modal__error" role="alert" hidden></p>
+
+        <div class="modal__footer">
+          <button type="button" class="modal__cancel" data-close>Cancel</button>
+          <button type="submit" class="btn-primary">Add file</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- Shared popup helpers ---------- */
+    function openOverlay(overlay) {
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeOverlay(overlay) {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    function anyOverlayOpen() {
+      return document.querySelector(".overlay.open") !== null;
+    }
+
+    document.querySelectorAll(".overlay").forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) closeOverlay(overlay);
+      });
+      overlay.querySelectorAll("[data-close]").forEach(btn => {
+        btn.addEventListener("click", () => closeOverlay(overlay));
+      });
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key !== "Escape") return;
+      document.querySelectorAll(".overlay.open").forEach(closeOverlay);
+    });
+
+    /* ---------- Course draft ---------- */
+    const ROOT_CATEGORIES = [
+      "Development",
+      "Business",
+      "Finance & Accounting",
+      "IT & Software",
+      "Office Productivity",
+      "Personal Development",
+      "Design"
+    ];
+
+    const instructorId = Number(document.body.dataset.instructorId);
+    const draftOverlay = document.getElementById("draft-overlay");
+    const draftForm = document.getElementById("draft-form");
+    const categoryList = document.getElementById("category-list");
+    const draftError = document.getElementById("form-error");
+
+    function buildCategoryRow() {
+      const row = document.createElement("div");
+      row.className = "category-row";
+
+      const select = document.createElement("select");
+      select.innerHTML = '<option value="">Root category</option>' +
+        ROOT_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join("");
+
+      const level2 = document.createElement("input");
+      level2.type = "text";
+      level2.placeholder = "Level 2";
+
+      const level3 = document.createElement("input");
+      level3.type = "text";
+      level3.placeholder = "Level 3 (optional)";
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "category-remove";
+      remove.innerHTML = "&times;";
+      remove.setAttribute("aria-label", "Remove category");
+      remove.addEventListener("click", () => {
+        row.remove();
+        if (categoryList.children.length === 0) addCategoryRow();
+      });
+
+      const onInput = () => {
+        if (select.value && level2.value.trim() && !row.nextElementSibling) {
+          addCategoryRow();
+        }
+      };
+      select.addEventListener("change", onInput);
+      level2.addEventListener("input", onInput);
+
+      row.append(select, level2, level3, remove);
+      return row;
+    }
+
+    function addCategoryRow() {
+      categoryList.appendChild(buildCategoryRow());
+    }
+
+    function collectCategories() {
+      const paths = [];
+      categoryList.querySelectorAll(".category-row").forEach(row => {
+        const [select, level2, level3] = row.children;
+        const parts = [select.value, level2.value.trim(), level3.value.trim()]
+          .filter(Boolean);
+        if (parts.length >= 2) paths.push(parts.join(">"));
+      });
+      return paths;
+    }
+
+    function showDraftError(message) {
+      draftError.textContent = message;
+      draftError.hidden = false;
+    }
+
+    function hideDraftError() {
+      draftError.textContent = "";
+      draftError.hidden = true;
+    }
+
+    document.getElementById("open-draft").addEventListener("click", () => {
+      openOverlay(draftOverlay);
+      if (categoryList.children.length === 0) addCategoryRow();
+      document.getElementById("course-title").focus();
+    });
+
+    draftOverlay.addEventListener("transitionend", () => {
+      if (!draftOverlay.classList.contains("open")) hideDraftError();
+    });
+
+    draftForm.addEventListener("submit", e => {
+      e.preventDefault();
+      hideDraftError();
+
+      const title = document.getElementById("course-title").value.trim();
+      const duration = document.getElementById("duration").value;
+      const overview = document.getElementById("overview").value.trim();
+      const categories = collectCategories();
+
+      if (!title) return showDraftError("Please enter a course title.");
+      if (!duration || Number(duration) <= 0) return showDraftError("Please enter an estimated duration.");
+      if (!overview) return showDraftError("Please write a short overview.");
+      if (categories.length === 0) return showDraftError("Please add at least one category.");
+
+      // No endpoint yet: this only logs the payload.
+      console.log({ instructorId, title, duration: Number(duration), overview, categories });
+      closeOverlay(draftOverlay);
+    });
+
+    /* ---------- Content files ---------- */
+    const contentOverlay = document.getElementById("content-overlay");
+    const contentForm = document.getElementById("content-form");
+    const contentFile = document.getElementById("content-file");
+    const contentHint = document.getElementById("content-hint");
+    const contentError = document.getElementById("content-error");
+    const fileList = document.getElementById("file-list");
+    const fileEmpty = document.getElementById("file-empty");
+
+    // Each accepted type maps to the extension the file must have.
+    const TYPE_RULES = {
+      mp4: { ext: ".mp4", mime: "video/mp4", label: "MP4" },
+      pdf: { ext: ".pdf", mime: "application/pdf", label: "PDF" }
+    };
+
+    function selectedType() {
+      const checked = contentForm.querySelector('input[name="content-type"]:checked');
+      return checked ? checked.value : null;
+    }
+
+    function showContentError(message) {
+      contentError.textContent = message;
+      contentError.hidden = false;
+    }
+
+    function hideContentError() {
+      contentError.textContent = "";
+      contentError.hidden = true;
+    }
+
+    // Keep the file picker in step with the chosen type.
+    contentForm.querySelectorAll('input[name="content-type"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        const rule = TYPE_RULES[selectedType()];
+        contentFile.accept = rule.mime;
+        contentHint.textContent = `Choose a ${rule.label} file (${rule.ext}).`;
+        contentFile.value = "";
+      });
+    });
+
+    function renderFiles(files) {
+      fileList.innerHTML = "";
+      fileEmpty.hidden = files.length > 0;
+      files.forEach(f => {
+        const li = document.createElement("li");
+        li.className = "file-item";
+
+        const badge = document.createElement("span");
+        badge.className = "file-type";
+        badge.textContent = f.type.toUpperCase();
+
+        const name = document.createElement("span");
+        name.className = "file-name";
+        name.textContent = f.name;
+        name.title = f.name;
+
+        li.append(badge, name);
+        fileList.appendChild(li);
+      });
+    }
+
+    // Client-side list only, until an upload endpoint exists.
+    const contentFiles = [];
+
+    document.getElementById("open-content").addEventListener("click", () => {
+      contentForm.reset();
+      contentFile.accept = "video/mp4,application/pdf";
+      contentHint.textContent = "Choose a content type first.";
+      hideContentError();
+      openOverlay(contentOverlay);
+    });
+
+    contentForm.addEventListener("submit", e => {
+      e.preventDefault();
+      hideContentError();
+
+      const type = selectedType();
+      const file = contentFile.files[0];
+
+      if (!type) return showContentError("Please choose a content type.");
+      if (!file) return showContentError("Please choose a file.");
+
+      const rule = TYPE_RULES[type];
+      if (!file.name.toLowerCase().endsWith(rule.ext)) {
+        return showContentError(`The selected file is not a ${rule.label} file.`);
+      }
+
+      contentFiles.push({ name: file.name, type });
+      renderFiles(contentFiles);
+
+      // No endpoint yet: this only logs the file.
+      console.log({ instructorId, type, file });
+      closeOverlay(contentOverlay);
+    });
+
+    renderFiles(contentFiles);
+
+    addCategoryRow();
+  </script>
+
+</body>
+</html>

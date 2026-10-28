@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register · Eduverse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;600&family=Unbounded:wght@600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/loginstyle.css' %}">
+</head>
+<body>
+  <main class="hero hero--form">
+    <div class="hero__content">
+      <h1 class="hero__title hero__title--sm">Register as {{ role_label|default:"a student" }}</h1>
+
+      <form id="register-form" class="auth-form" method="post">
+        {% csrf_token %}
+        {% if error %}<p class="auth-form__error" role="alert">{{ error }}</p>{% endif %}
+
+        <input type="hidden" name="role" value="{{ role|default:'student' }}">
+
+        <div class="auth-form__field">
+          <label for="name">Full name</label>
+          <input id="name" name="name" type="text" maxlength="100" autocomplete="name" required>
+        </div>
+
+        <div class="auth-form__field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" maxlength="150" autocomplete="username" required>
+        </div>
+
+        <div class="auth-form__field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" maxlength="150" autocomplete="email" required>
+        </div>
+
+        {% if role == "instructor" %}
+        <div class="auth-form__field">
+          <label for="department">Department (optional)</label>
+          <input id="department" name="department" type="text" maxlength="100">
+        </div>
+        {% endif %}
+
+        <div class="auth-form__field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="At least 8 characters" required>
+        </div>
+
+        <div class="auth-form__field">
+          <label for="confirm_password">Confirm password</label>
+          <input id="confirm_password" name="confirm_password" type="password" maxlength="128" autocomplete="new-password" required>
+        </div>
+
+        <button class="auth-form__submit" type="submit">Create account</button>
+
+        <p class="auth-form__alt">
+          Already have an account? <a href="/login/">Log in</a>
+        </p>
+        <p id="register-message" class="auth-form__error" role="alert" hidden></p>
+      </form>
+    </div>
+  </main>
+
+  <script src="{% static 'accounts/register/main.js' %}"></script>
+</body>
+</html>

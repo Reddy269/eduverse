@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in · Eduverse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;600&family=Unbounded:wght@600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/loginstyle.css' %}">
+</head>
+<body>
+  <main class="hero hero--form">
+    <div class="hero__content">
+      <h1 class="hero__title hero__title--sm">Log in to Eduverse</h1>
+
+      <form id="login-form" class="auth-form" method="post">
+        {% csrf_token %}
+        {% if error %}<p class="auth-form__error" role="alert">{{ error }}</p>{% endif %}
+
+        <div class="auth-form__field">
+          <label for="role">I am a</label>
+          <select id="role" name="role" required>
+            <option value="student" data-register="/accounts/register/student/" data-label="a student" selected>Student</option>
+            <option value="instructor" data-register="/accounts/register/instructor/" data-label="an instructor">Instructor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div class="auth-form__field">
+          <label for="username">Email</label>
+          <input id="username" name="username" type="email" autocomplete="username" required>
+        </div>
+
+        <div class="auth-form__field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+
+        <button class="auth-form__submit" type="submit">Log in</button>
+
+        <p id="login-message" class="auth-form__error" role="alert" hidden></p>
+
+        <p class="auth-form__alt" id="register-row">
+          New here? <a id="register-link" href="register/student/">Register as a student</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <script src="{% static 'accounts/login/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+
+CREATE TABLE students (
+    id               INTEGER PRIMARY KEY,
+    name             TEXT    NOT NULL,
+    email            TEXT    NOT NULL UNIQUE,
+    age              INTEGER CHECK (age > 0),
+    major            TEXT,
+    enrollment_year  INTEGER NOT NULL
+);
+
+CREATE TABLE courses (
+    id           INTEGER PRIMARY KEY,
+    course_code  TEXT    NOT NULL UNIQUE,
+    course_name  TEXT    NOT NULL,
+    credits      INTEGER NOT NULL CHECK (credits > 0),
+    department   TEXT
+);
+
+CREATE TABLE enrollments (
+    id         INTEGER PRIMARY KEY,
+    student_id INTEGER NOT NULL,
+    course_id  INTEGER NOT NULL,
+    semester   TEXT    NOT NULL,
+    grade      TEXT    CHECK (grade IS NULL OR grade IN ('A','B','C','D','F')),
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (course_id)  REFERENCES courses(id)
+);
+
+
