@@ -6,14 +6,9 @@ from dtos import RequestAddContentDTO, RequestDeleteContentDTO, RequestUpdateCon
 class MediaStorageInterface(ABC):
     @abstractmethod
     def save(self, request:RequestAddContentDTO):
-        type = request.content_type
-        if type == "Video":
-
-    @abstractmethod
-    def delete(self, request:RequestDeleteContentDTO):
         pass
     @abstractmethod
-    def update(self, request:RequestUpdateContentDTO):
+    def delete(self, request:RequestDeleteContentDTO):
         pass
 
 

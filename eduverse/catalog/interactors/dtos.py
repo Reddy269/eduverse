@@ -127,11 +127,7 @@ class RequestDeleteContentDTO:
     content_type: LessonType
     filename: str
 
-@dataclass
-class RequestUpdateContentDTO:
-    content_type: LessonType
-    filename: str
-    content: BinaryIO
+
 
 
 

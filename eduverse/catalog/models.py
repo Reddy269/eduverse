@@ -48,3 +48,18 @@ class Lesson(models.Model):
     reference_module = models.CharField(max_length=100)
     lesson_type = models.CharField(max_length=100)
     content_metadata = models.TextField()
+
+
+FILE_TYPES = {".mp4":"videos",".pdf":"srticles"}
+
+def file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    path = FILE_TYPES.get(ext)
+    return f"{path}/{filename}"
+
+class Content(models.Model):
+    name = models.CharField(max_length = 20)
+    file = models.FileField(upload_to=file_path)
+
+
+
