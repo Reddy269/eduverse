@@ -1,2 +1,0 @@
-# eduverse
-learning management system
