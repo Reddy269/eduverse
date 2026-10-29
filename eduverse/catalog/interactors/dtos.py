@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, List, Union, BinaryIO
 
-from catalog.storages.category_storage import CategoryStorage
+
 from .exceptions import InvalidCategoryException
 
 class LessonType(str, Enum):

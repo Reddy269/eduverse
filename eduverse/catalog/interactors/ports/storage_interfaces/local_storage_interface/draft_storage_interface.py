@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 
-from dtos import RequestUpdateCourseDTO
-from interactors.dtos import RequestCreateUserDTO
+from catalog.interactors.dtos import RequestCreateCourseDTO,RequestUpdateCourseDTO
 
 
 class DraftStorageInterface(ABC):
     @abstractmethod
-    def save(self,request:RequestCreateUserDTO):
+    def save(self,request:RequestCreateCourseDTO):
         pass
 
     def update(self,request:RequestUpdateCourseDTO):
