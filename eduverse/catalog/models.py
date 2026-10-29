@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.functions import Lower
+from catalog.interactors.dtos import LessonType
 
 
 # Create your models here.
@@ -47,18 +48,23 @@ class Lesson(models.Model):
     reference_order = models.IntegerField()
     reference_module = models.CharField(max_length=100)
     lesson_type = models.CharField(max_length=100)
-    content_metadata = models.TextField()
-
 
 FILE_TYPES = {".mp4":"videos",".pdf":"srticles"}
 
 def file_path(instance, filename):
-    ext = filename.split('.')[-1]
-    path = FILE_TYPES.get(ext)
-    return f"{path}/{filename}"
+    return f"{instance.content_type}/{filename}"
 
 class Content(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    lesson = models.OneToOneField(
+        Lesson,
+        on_delete=models.SET_NULL,  # deleting a lesson keeps the content, unlinked
+        null=True,
+        blank=True,
+        related_name="content",
+    )
     name = models.CharField(max_length = 20)
+    content_type = models.CharField(max_length = 20,choices = [(t.value,t.name) for t in LessonType])
     file = models.FileField(upload_to=file_path)
 
 

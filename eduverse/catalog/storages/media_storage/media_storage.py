@@ -1,17 +1,11 @@
 from catalog.interactors.ports.storage_interfaces.media_storage_interface import MediaStorageInterface
-from dtos import RequestAddContentDTO, RequestDeleteContentDTO, RequestUpdateContentDTO
+from dtos import RequestAddContentDTO, RequestDeleteContentDTO
 from catalog.models import Content
 
 
 class MediaStorage(MediaStorageInterface):
     def save(self, request:RequestAddContentDTO):
-        FILE_TYPES = {".mp4": "videos", ".pdf": "srticles"}
-
-        def file_path(instance, filename):
-            ext = filename.split('.')[-1]
-            path = FILE_TYPES.get(ext)
-            return f"{path}/{filename}"
-        content = Content.objects.create(name = request.filename, file = file_path() )
+        pass
 
     def delete(self, request:RequestDeleteContentDTO):
         pass

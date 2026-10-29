@@ -7,7 +7,7 @@ from .exceptions import InvalidCategoryException
 
 class LessonType(str, Enum):
     VIDEO = "video"
-    ARTICLE = "Article"
+    ARTICLE = "article"
 
 class ItemType(str, Enum):
     LESSON = "lesson"
@@ -118,9 +118,14 @@ class RequestUpdateCourseDTO:
 
 @dataclass
 class RequestAddContentDTO:
-    content_type: LessonType
+    content_type: LessonType | str
     content: BinaryIO
     filename: str
+
+    def __post_init__(self):
+        self.content_type = LessonType(self.content_type)
+
+
 
 @dataclass
 class RequestDeleteContentDTO:
