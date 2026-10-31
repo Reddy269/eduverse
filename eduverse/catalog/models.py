@@ -15,7 +15,7 @@ class Course(models.Model):
     status = models.CharField(max_length=3, choices=course_status, default="DRA")
     prerequisites = models.TextField(null=True,blank=True)
     overview = models.TextField()
-    duration = models.IntegerField()
+    duration = models.IntegerField(null=True,blank=True)
     price = models.IntegerField(null=True,blank=True)
     about_instructor = models.TextField(null=True,blank=True)
     listing_image_metadata = models.TextField(null=True,blank=True)
@@ -67,5 +67,6 @@ class Content(models.Model):
     content_type = models.CharField(max_length = 20,choices = [(t.value,t.name) for t in LessonType])
     file = models.FileField(upload_to=file_path)
 
-
+class Test(models.Model):
+    file = models.FileField(upload_to="test/yo")
 
