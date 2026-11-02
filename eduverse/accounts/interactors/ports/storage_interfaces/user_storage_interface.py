@@ -6,11 +6,24 @@ class UserStorageInterface(ABC):
     @abstractmethod
     def create_user(self,request:RequestCreateUserDTO):
         pass
+    @abstractmethod
     def get_user(self):
         pass
+    @abstractmethod
     def is_admin(self):
         pass
+    @abstractmethod
     def is_email_taken(self):
         pass
-    def is_user_registered(self):
+    @abstractmethod
+    def is_username_taken(self):
+        pass
+    @abstractmethod
+    def register_email(self,request:RequestCreateUserDTO):
+        pass
+    @abstractmethod
+    def is_under_registration(self,email:str) -> bool:
+        pass
+    @abstractmethod
+    def delete_user(self):
         pass

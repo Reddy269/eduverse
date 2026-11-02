@@ -16,3 +16,6 @@ class InvalidCredentialsError(AccountError):
 
 class InvalidPasswordError(AccountError):
     """The password is wrong."""
+
+class InvalidUserTypeError(AccountError):
+    """The user type is invalid."""

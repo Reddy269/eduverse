@@ -2,11 +2,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import json
 
-
-from accounts.interactors.dtos import RequestRegisterUserDTO
-from accounts.interactors.register_user_interactor import RegisterUserInteractor
+from interactors.application_specific.register_email_interactor import RegisterUserInteractor
 from accounts.interactors.core.create_user_interactor import CreateUserInteractor
-from accounts.storages import StudentStorage
 from accounts.adapters.password_hasher import PasswordHasher
 from accounts.interactors.exceptions import EmailAlreadyExistsError
 from accounts.interactors.dtos import RequestRegisterUserDTO

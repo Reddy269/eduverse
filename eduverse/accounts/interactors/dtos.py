@@ -2,9 +2,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 from enum import Enum
-from accounts.interactors.exceptions import InvalidPasswordError
+from accounts.interactors.exceptions import InvalidPasswordError, InvalidUserTypeError
 import re
 from prompt_toolkit import enums
+from .exceptions import InvalidUserTypeError
 
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -34,38 +35,35 @@ class UserDTO:
 
 @dataclass
 class RequestCreateUserDTO:
-    name: str
     email: str
+    username: str
     password: str
-    usertype: UserType
+    confirm_password: str
 
 
 @dataclass
-class RequestRegisterUserDTO:
+class RequestRegisterEmailDTO:
     name: str
     email: str
-    password: str
     UserType: UserType
+    DOB: str
+
 
     # checks if data is valid
-    def __init__(self,name,email,password,UserType):
+    def __init__(self,username,email,password,UserType,DOB,name):
         self.name = name
         self.email = email
-        self.password = password
         self.UserType = UserType
+        self.DOB = DOB
     def __post_init__(self):
-        self.UserType = UserType(self.UserType)
-        self.email = self.email.strip().lower()
+        try:
+            self.UserType = UserType(self.UserType)
+        except ValueError:
+            raise InvalidUserTypeError()
 
         if not self.name.strip():
             raise ValueError("name cannot be empty")
-        if not EMAIL_PATTERN.match(self.email):
-            raise ValueError("email is not valid")
-        if len(self.password) < 8:
-            raise InvalidPasswordError(
-                f"Password must be at least {8} characters long"
-            )
-        if not any(char.isupper() for char in self.password):
-            raise InvalidPasswordError("Password must contain at least one capital letter")
-        if not any(char.isdigit() for char in self.password):
-            raise InvalidPasswordError("Password must contain at least one number")
+
+        if not self.email.strip():
+            raise ValueError("email cannot be empty")
+
