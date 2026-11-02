@@ -1,0 +1,110 @@
+/* ===== THEME: change these to match your login/register page ===== */
+:root {
+  --ih-bg: #f4f6fb;          /* page background */
+  --ih-surface: #ffffff;     /* cards, topbar */
+  --ih-text: #1f2937;        /* main text */
+  --ih-muted: #6b7280;       /* secondary text */
+  --ih-primary: #4f46e5;     /* buttons, links (use your login button color) */
+  --ih-primary-hover: #4338ca;
+  --ih-border: #e5e7eb;
+  --ih-radius: 10px;         /* use your login card/input radius */
+  --ih-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --ih-font: "Segoe UI", Roboto, Arial, sans-serif; /* use your login font */
+}
+
+.ih-body {
+  margin: 0;
+  background: var(--ih-bg);
+  color: var(--ih-text);
+  font-family: var(--ih-font);
+  line-height: 1.5;
+}
+
+/* Top bar */
+.ih-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 32px;
+  background: var(--ih-surface);
+  border-bottom: 1px solid var(--ih-border);
+}
+.ih-brand { font-weight: 700; font-size: 1.25rem; color: var(--ih-primary); }
+.ih-user { display: flex; gap: 16px; align-items: center; color: var(--ih-muted); }
+
+/* Layout */
+.ih-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+
+.ih-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 28px;
+  background: var(--ih-surface);
+  border-radius: var(--ih-radius);
+  box-shadow: var(--ih-shadow);
+}
+.ih-hero h1 { margin: 0 0 4px; font-size: 1.6rem; }
+.ih-hero p { margin: 0; color: var(--ih-muted); }
+
+.ih-section { margin-top: 40px; }
+.ih-section h2 { margin: 0 0 16px; font-size: 1.25rem; }
+
+/* Course cards */
+.ih-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.ih-card {
+  background: var(--ih-surface);
+  border: 1px solid var(--ih-border);
+  border-radius: var(--ih-radius);
+  box-shadow: var(--ih-shadow);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ih-card h3 { margin: 0; font-size: 1.1rem; }
+.ih-meta { margin: 0; color: var(--ih-muted); font-size: 0.9rem; }
+.ih-actions { margin-top: auto; padding-top: 8px; }
+
+/* Status badges */
+.ih-badge {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.ih-badge--published { background: #dcfce7; color: #166534; }
+.ih-badge--draft { background: #fef3c7; color: #92400e; }
+
+/* Buttons and links */
+.ih-btn {
+  display: inline-block;
+  padding: 12px 22px;
+  background: var(--ih-primary);
+  color: #fff;
+  border-radius: var(--ih-radius);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.ih-btn:hover { background: var(--ih-primary-hover); }
+
+.ih-link { color: var(--ih-primary); font-weight: 600; text-decoration: none; }
+.ih-link:hover { text-decoration: underline; }
+
+.ih-btn:focus-visible,
+.ih-link:focus-visible { outline: 3px solid var(--ih-primary); outline-offset: 2px; }
+
+.ih-empty { color: var(--ih-muted); grid-column: 1 / -1; }
+
+@media (max-width: 600px) {
+  .ih-topbar { padding: 12px 16px; }
+  .ih-hero { padding: 20px; }
+}

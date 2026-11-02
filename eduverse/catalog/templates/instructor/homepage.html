@@ -1,10 +1,70 @@
+
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instructor Home | Eduverse</title>
+  <!-- Load your login/register CSS first so shared variables and fonts carry over -->
+  <link rel="stylesheet" href="{% static 'css/instructor_home.css' %}">
 </head>
-<body>
+<body class="ih-body">
 
+  <header class="ih-topbar">
+    <span class="ih-brand">Eduverse</span>
+    <div class="ih-user">
+      <span>{{ instructor.name }}</span>
+      <a  class="ih-link">Log out</a>
+    </div>
+  </header>
+
+  <main class="ih-wrap">
+
+    <section class="ih-hero">
+      <div>
+        <h1>Welcome back, {{ instructor.name }}</h1>
+        <p>{{ published_courses|length }} published, {{ draft_courses|length }} in draft.</p>
+      </div>
+      <a href="{% url 'create_course' instructor.instructor_id %}" class="ih-btn">Draft a new course</a>
+    </section>
+
+    <section class="ih-section">
+      <h2>Your published courses</h2>
+      <div class="ih-grid">
+        {% for course in published_courses %}
+        <article class="ih-card">
+          <span class="ih-badge ih-badge--published">Published</span>
+          <h3>{{ course.title }}</h3>
+          <p class="ih-meta">{{ course.coursecode }} &middot; {{ course.duration }}</p>
+          <div class="ih-actions">
+            <a href="{% url 'course_detail' course.id %}" class="ih-link">View</a>
+          </div>
+        </article>
+        {% empty %}
+        <p class="ih-empty">No published courses yet. Finish a draft and submit it for approval.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="ih-section">
+      <h2>Courses in draft</h2>
+      <div class="ih-grid">
+        {% for course in draft_courses %}
+        <article class="ih-card">
+          <span class="ih-badge ih-badge--draft">Draft</span>
+          <h3>{{ course.title }}</h3>
+          <p class="ih-meta">{{ course.coursecode }} &middot; {{ course.duration }}</p>
+          <div class="ih-actions">
+            <a href="{% url 'edit_course' course.id %}" class="ih-link">Continue editing</a>
+          </div>
+        </article>
+        {% empty %}
+        <p class="ih-empty">No drafts. Start one with "Draft a new course".</p>
+        {% endfor %}
+      </div>
+    </section>
+
+  </main>
 </body>
 </html>
