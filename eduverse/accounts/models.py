@@ -18,16 +18,13 @@ class Student(models.Model):
 
 
 class Instructor(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="instructor_profile"
-    )
+    instructor_id = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=150)
-    department = models.CharField(max_length=100, null=True, blank=True)
+    dob = models.DateField(null=True, blank=True)
+    username = models.CharField(max_length=100, null=True, blank=True)
+    password = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Instructor<{self.user_id}: {self.name}>"
 
 
 class Admin(models.Model):

@@ -14,15 +14,22 @@ class UserStorage(UserStorageInterface):
 
 
     def create_user(self,request:RequestCreateUserDTO):
-        if request.username.value == "student":
+        if request.usertype.value == "student":
             student = Student.objects.get(email = request.email)
             student.username = request.username
             student.password = request.password
             student.save()
 
 
-    def get_user(self,request:RequestRegisterEmailDTO):
+    def get_user_id(self,email_or_username:str,usertype:str):
+        if usertype == "instructor":
+            return Instructor.objects.get(email = email_or_username).instructor_id
+        elif usertype == "student":
+            return Student.objects.get(email = email_or_username).user_id
+
+    def delete_user(self):
         pass
+
 
 
 """class RequestCreateUserDTO:

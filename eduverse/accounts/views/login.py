@@ -1,11 +1,11 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from accounts.interactors.application_specific import LoginUserInteractor
 from accounts.adapters.hash import PasswordHasher
 from accounts.adapters.store import StoreValidation
 from accounts.interactors.dtos import RequestLoginUserDTO
 from accounts.interactors.exceptions import UsernameDoesNotExistError, PasswordDoesNotMatchUsernameError
-
+from accounts.interactors.core import GetUserInteractor
 
 def loginpage(request):
     if request.method == 'POST':
@@ -26,12 +26,15 @@ def loginpage(request):
             return HttpResponse("Username does not exist",status=404)
         except PasswordDoesNotMatchUsernameError as e:
             return HttpResponse("Password does not match",status=404)
-        return HttpResponse("login success",status=200)
+        if usertype == "instructor":
+            user = GetUserInteractor()
+            id = user.get_user_id()
+            return redirect('catalog/')
 
 
 
 
 
 
-        return HttpResponse('ok')
+
     return render(request, 'accounts/login/login.html')
