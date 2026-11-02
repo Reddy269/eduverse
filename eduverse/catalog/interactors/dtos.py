@@ -132,7 +132,9 @@ class RequestDeleteContentDTO:
     content_type: LessonType
     filename: str
 
-
+@dataclass()
+class RequestSearchCourseDTO:
+    keyword: str
 
 
 

@@ -1,2 +1,0 @@
-from .course_storage_interface import CourseStorageInterface
-from .draft_storage_interface import DraftStorageInterface
