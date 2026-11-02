@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from accounts.interactors.dtos import RequestCreateUserDTO
+from accounts.interactors.dtos import RequestCreateUserDTO, RequestRegisterEmailDTO
 
 
 class UserStorageInterface(ABC):
@@ -13,16 +13,16 @@ class UserStorageInterface(ABC):
     def is_admin(self):
         pass
     @abstractmethod
-    def is_email_taken(self):
+    def is_email_taken(self,email:str,usertype:str) -> bool:
         pass
     @abstractmethod
-    def is_username_taken(self):
+    def is_username_taken(self,username:str,usertype:str) -> bool:
         pass
     @abstractmethod
-    def register_email(self,request:RequestCreateUserDTO):
+    def register_email(self,request:RequestRegisterEmailDTO):
         pass
     @abstractmethod
-    def is_under_registration(self,email:str) -> bool:
+    def is_under_registration(self,email:str,usertype:str) -> bool:
         pass
     @abstractmethod
     def delete_user(self):

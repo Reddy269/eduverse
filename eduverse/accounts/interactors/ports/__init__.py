@@ -1,3 +1,3 @@
 from .publish_interfaces import PublishEventInerface
 from .authentication_interfaces import PasswordHasherInterface
-from .storage_interfaces import UserStorageInterface
+from .storage_interfaces import UserStorageInterface,StorageValidationInterface

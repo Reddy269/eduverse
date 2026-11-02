@@ -5,7 +5,7 @@ from enum import Enum
 from accounts.interactors.exceptions import InvalidPasswordError, InvalidUserTypeError
 import re
 from prompt_toolkit import enums
-from .exceptions import InvalidUserTypeError
+from .exceptions import InvalidUserTypeError,InvalidDOBError
 
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -18,14 +18,12 @@ class UserType(str, Enum):
 
 
 @dataclass
-class UserDTO:
-    id : int
+class RegisteredUserDTO:
     name: str
     email: str
     usertype: UserType
 
-    def __init__(self,id,name,email,usertype):
-        self.id = id
+    def __init__(self,name,email,usertype):
         self.name = name
         self.email = email
         self.usertype = usertype
@@ -35,10 +33,15 @@ class UserDTO:
 
 @dataclass
 class RequestCreateUserDTO:
+    usertype: UserType
     email: str
     username: str
     password: str
     confirm_password: str
+
+    def __post_init__(self):
+        self.usertype = UserType(self.usertype)
+
 
 
 @dataclass
@@ -66,4 +69,24 @@ class RequestRegisterEmailDTO:
 
         if not self.email.strip():
             raise ValueError("email cannot be empty")
+
+        DOB_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+        if not isinstance(self.DOB, str) or not DOB_PATTERN.match(self.DOB):
+            raise InvalidDOBError()
+
+@dataclass
+class RequestLoginUserDTO:
+    usertype: UserType
+    email_or_username: str
+    password: str
+
+    def __post_init__(self):
+        if not self.email_or_username or not self.email_or_username.strip():
+            raise ValueError("email or username cannot be empty")
+        if not self.password:
+            raise ValueError("password cannot be empty")
+
+
+
 

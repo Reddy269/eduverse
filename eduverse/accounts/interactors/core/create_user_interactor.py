@@ -1,5 +1,5 @@
 from accounts.interactors.exceptions import EmailAlreadyExistsError
-from accounts.interactors.dtos import RequestCreateUserDTO
+from accounts.interactors.dtos import RequestCreateUserDTO, RegisteredUserDTO
 from accounts.interactors.ports import PasswordHasherInterface,UserStorageInterface
 
 

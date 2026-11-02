@@ -19,3 +19,12 @@ class InvalidPasswordError(AccountError):
 
 class InvalidUserTypeError(AccountError):
     """The user type is invalid."""
+
+class InvalidDOBError(AccountError):
+    """The DOB is invalid."""
+
+class UsernameDoesNotExistError(AccountError):
+    """The username does not exist."""
+
+class PasswordDoesNotMatchUsernameError(AccountError):
+    """The password does not match with the username."""
