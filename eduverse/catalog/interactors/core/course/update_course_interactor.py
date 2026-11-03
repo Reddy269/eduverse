@@ -1,7 +1,7 @@
-from catalog.interactors.dtos import RequestUpdateContentDTO, RequestAddContentDTO
-from catalog.models import Course, Lesson
+from catalog.interactors.dtos import RequestUpdateContentDTO
+from catalog.models import Course
 from catalog.interactors.ports import DraftStorageInterface,MediaStorageInterface
-from catalog.interactors.content import AddContentInteractor
+from application_specific.content import AddContentInteractor
 from dtos import RequestUpdateCourseDTO
 
 

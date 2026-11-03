@@ -64,7 +64,7 @@ class Content(models.Model):
 
 class Lesson(models.Model):
     instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE)
-    content = models.OneToOneField(Content, on_delete=models.CASCADE)
+    content = models.OneToOneField(Content, on_delete=models.PROTECT , null=True,blank=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
     lesson_type = models.CharField(max_length=100)
