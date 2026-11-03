@@ -6,5 +6,5 @@ def default(request):
     return HttpResponse('default')
 
 def homepage(request,id):
-    id = int(id)
-    return render(request,'instructor/homepage.html')
+    instructor_id = id
+    return HttpResponse(f'instructor_id : {instructor_id}')
