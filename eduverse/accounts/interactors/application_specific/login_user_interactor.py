@@ -16,6 +16,7 @@ class LoginUserInteractor:
     def login(self,request:RequestLoginUserDTO):
         if not self.storage_validation.is_email_taken(request.email_or_username,request.usertype):
             raise UsernameDoesNotExistError()
+
         if not self.password_validation.verify_password(request.password):
             raise PasswordDoesNotMatchUsernameError()
         return True

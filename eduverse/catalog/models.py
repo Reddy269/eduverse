@@ -19,11 +19,13 @@ class Category(models.Model):
         ]
 
 class InstructorProfile(models.Model):
+    username = models.CharField(max_length = 20,unique = True,null = True,blank = True)
+    email = models.CharField(max_length = 20,unique = True,null = True,blank = True)
+    dob = models.DateField(null=True,blank=True)
     display_name = models.CharField(max_length=100)
-    app_id = models.CharField(max_length = 20,unique=True)
-    bio = models.TextField()
+    bio = models.TextField(null=True,blank=True)
     display_profile_image = models.ImageField(upload_to="instructors/", blank=True)
-    expertise = models.ManyToManyField(Category,blank=True)
+    expertise = models.CharField(max_length=100,null=True,blank=True)
 
 
 # Create your models here.
@@ -35,8 +37,8 @@ course_status = [
 ]
 
 class Course(models.Model):
-    instructor = models.ForeignKey(InstructorProfile,on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
+    instructor = models.ForeignKey(InstructorProfile,on_delete=models.CASCADE, null=True,blank=True)
+    title = models.CharField(max_length=100,unique=True)
     status = models.CharField(max_length=3, choices=course_status, default="DRA")
     prerequisites = models.TextField(null=True,blank=True)
     overview = models.TextField()
@@ -44,8 +46,8 @@ class Course(models.Model):
     duration = models.IntegerField(null=True,blank=True)
     price = models.IntegerField(null=True,blank=True)
     about_instructor = models.TextField(null=True,blank=True)
-    listing_image_metadata = models.TextField(null=True,blank=True)
-    preview_content_metadata = models.TextField(null=True,blank=True)
+    thumbnail_image = models.ImageField(null=True,blank=True)
+    preview_content_file = models.FileField(null=True,blank=True)
     course_code = models.CharField(max_length=100,null=True,blank=True)
 
 
@@ -57,20 +59,22 @@ def file_path(instance, filename):
     return f"{instance.content_type}/{filename}"
 
 class Content(models.Model):
-    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(InstructorProfile, on_delete=models.PROTECT, null=True,blank=True)
     name = models.CharField(max_length = 20)
     content_type = models.CharField(max_length = 20,choices = [(t.value,t.name) for t in LessonType])
     file = models.FileField(upload_to=file_path)
 
 class Lesson(models.Model):
-    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null = True, blank = True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
     content = models.OneToOneField(Content, on_delete=models.PROTECT , null=True,blank=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
     lesson_type = models.CharField(max_length=100)
 
 class Section(models.Model):
-    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null= True, blank = True)
     title = models.CharField(max_length=100)
     estimated_duration = models.IntegerField(null=True,blank=True)
     description = models.TextField(null=True,blank=True)

@@ -5,7 +5,7 @@ from accounts.models import Admin, Instructor, Student
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "name", "email", "created_at")
+    list_display = ( "name", "email", "created_at")
     search_fields = ("name", "email")
 
 
@@ -17,5 +17,5 @@ class InstructorAdmin(admin.ModelAdmin):
 
 @admin.register(Admin)
 class AdminProfileAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "name", "email", "created_at")
+    list_display = ( "name", "email", "created_at")
     search_fields = ("name", "email")

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ content.name }}</title>
+<title>{% if content %}{{ content.display_name }}{% else %}Instructor{% endif %}</title>
 <style>
   :root { --bg:#e9ecf1; --bar:#fff; --text:#1d2330; --line:#c9cfdb; --accent:#2457d6; --err:#b42318; }
   @media (prefers-color-scheme: dark) {
@@ -14,63 +14,62 @@
   header { position:sticky; top:0; z-index:1; display:flex; flex-wrap:wrap; align-items:center;
            gap:8px 20px; padding:12px 20px; background:var(--bar); border-bottom:1px solid var(--line); }
   h1 { margin:0; font-size:1.1rem; flex:1 1 200px; }
-  #count { color:var(--text); opacity:.7; font-size:.9rem; }
-  a { color:var(--accent); }
-  #pages { max-width:900px; margin:20px auto; padding:0 12px; }
-  canvas { display:block; width:100%; margin:0 0 16px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.25); }
-  #msg { max-width:900px; margin:20px auto; padding:0 12px; }
-  #msg.err { color:var(--err); }
+  a, button.link { color:var(--accent); background:none; border:0; padding:0; font:inherit; cursor:pointer; }
+  a:hover, button.link:hover { text-decoration:underline; }
+  main { max-width:900px; margin:20px auto; padding:0 12px; }
+  .viewer { overflow:auto; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.25); }
+  .viewer img { display:block; width:100%; height:auto; cursor:zoom-in; }
+  .viewer.actual img { width:auto; max-width:none; cursor:zoom-out; }
+  .bio { margin-top:16px; white-space:pre-line; }
+  .msg { margin:20px 0; }
+  .err { color:var(--err); }
 </style>
 </head>
 <body>
+{% if content %}
   <header>
-    <h1>{{ content.name }}</h1>
-    <span id="count"></span>
-    <a href="{{ content.file.url }}" target="_blank" rel="noopener">Open in new tab</a>
-    <a href="{{ content.file.url }}" download>Download</a>
+    <h1>{{ content.display_name }}</h1>
+    {% if content.display_profile_image %}
+      <button type="button" class="link" id="zoomBtn">Actual size</button>
+      <a href="{{ content.display_profile_image.url }}" target="_blank" rel="noopener">Open in new tab</a>
+      <a href="{{ content.display_profile_image.url }}" download>Download</a>
+    {% endif %}
   </header>
 
-  <p id="msg">Loading PDF...</p>
-  <main id="pages" aria-label="PDF pages"></main>
+  <main>
+    {% if content.display_profile_image %}
+      <div class="viewer" id="viewer">
+        <img id="photo" src="{{ content.display_profile_image.url }}" alt="{{ content.display_name }}">
+      </div>
+      <p class="msg err" id="imgError" hidden>Could not load the image. Use “Open in new tab” instead.</p>
+    {% else %}
+      <p class="msg">This instructor has no profile image.</p>
+    {% endif %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    {% if content.bio %}<p class="bio">{{ content.bio }}</p>{% endif %}
+  </main>
+
+  {% if content.display_profile_image %}
   <script>
-    const url = "{{ content.file.url|escapejs }}";
-    const pages = document.getElementById('pages');
-    const msg = document.getElementById('msg');
+    const viewer = document.getElementById("viewer");
+    const photo = document.getElementById("photo");
+    const zoomBtn = document.getElementById("zoomBtn");
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-    async function show() {
-      try {
-        const pdf = await pdfjsLib.getDocument(url).promise;   // fetches the file, same origin
-        document.getElementById('count').textContent = pdf.numPages + (pdf.numPages === 1 ? ' page' : ' pages');
-        msg.style.display = 'none';
-
-        const cssWidth = pages.clientWidth;
-        const dpr = window.devicePixelRatio || 1;
-
-        for (let n = 1; n <= pdf.numPages; n++) {
-          const page = await pdf.getPage(n);
-          const fit = cssWidth / page.getViewport({ scale: 1 }).width;
-          const vp = page.getViewport({ scale: fit * dpr });
-
-          const canvas = document.createElement('canvas');
-          canvas.width = vp.width;
-          canvas.height = vp.height;
-          canvas.setAttribute('aria-label', 'Page ' + n);
-          pages.appendChild(canvas);
-
-          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-        }
-      } catch (e) {
-        msg.className = 'err';
-        msg.style.display = 'block';
-        msg.textContent = 'Could not load the PDF (' + e.message + '). Use "Open in new tab" instead.';
-      }
+    function toggleZoom() {
+      const actual = viewer.classList.toggle("actual");
+      zoomBtn.textContent = actual ? "Fit to width" : "Actual size";
     }
-    show();
+    photo.addEventListener("click", toggleZoom);
+    zoomBtn.addEventListener("click", toggleZoom);
+
+    photo.addEventListener("error", () => {
+      viewer.hidden = true;
+      document.getElementById("imgError").hidden = false;
+    });
   </script>
+  {% endif %}
+{% else %}
+  <main><p class="msg err">No instructor found.</p></main>
+{% endif %}
 </body>
 </html>

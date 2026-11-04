@@ -31,7 +31,6 @@ class RegisterUserInteractor:
         with transaction.atomic():
             obj = CreateUserInteractor(self.store,self.password_hasher)
             obj.create(request)
-            self.signal.se
 
 
 

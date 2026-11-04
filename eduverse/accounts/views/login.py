@@ -5,7 +5,7 @@ from accounts.adapters.hash import PasswordHasher
 from accounts.adapters.store import StoreValidation
 from accounts.interactors.dtos import RequestLoginUserDTO
 from accounts.interactors.exceptions import UsernameDoesNotExistError, PasswordDoesNotMatchUsernameError
-from accounts.interactors.core import GetUserInteractor
+from accounts.interactors.core import GetUserIdInteractor
 
 def loginpage(request):
     if request.method == 'POST':
@@ -27,9 +27,10 @@ def loginpage(request):
         except PasswordDoesNotMatchUsernameError as e:
             return HttpResponse("Password does not match",status=404)
         if usertype == "instructor":
-            user = GetUserInteractor()
-            id = user.get_user_id()
-            return redirect('catalog/')
+            return redirect(f"/catalog/ravi_k")
+        if usertype == "student":
+            return redirect(f"student_management/{username}")
+
 
 
 

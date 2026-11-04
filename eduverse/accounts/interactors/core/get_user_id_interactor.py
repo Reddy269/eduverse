@@ -2,7 +2,7 @@ from accounts.interactors.dtos import RequestLoginUserDTO
 from accounts.interactors.ports import UserStorageInterface
 
 
-class GetUserInteractor:
+class GetUserIdInteractor:
     def __init__(self,
                  store:UserStorageInterface
                  ):

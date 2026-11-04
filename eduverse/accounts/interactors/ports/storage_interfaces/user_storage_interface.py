@@ -16,3 +16,7 @@ class UserStorageInterface(ABC):
     @abstractmethod
     def delete_user(self):
         pass
+
+    @abstractmethod
+    def get_user_profile(self,username:str,usertype:str):
+        pass

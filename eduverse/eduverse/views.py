@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from catalog.models import Test
+from catalog.models import Test , InstructorProfile
 from django.http import HttpResponse
 
 def homepage(request):
@@ -15,6 +15,6 @@ def uploadtest(request):
     return render(request, 'upload_test.html')
 
 def gettest(request):
-    content = Test.objects.first()
+    content = InstructorProfile.objects.first()
     return render(request, "get_test.html", {"content": content})
 

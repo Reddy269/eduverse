@@ -1,1 +1,2 @@
 from .receive_course_content import ReceiveCourseContent
+from .instructor_profile_interface import InstructorProfileInterface

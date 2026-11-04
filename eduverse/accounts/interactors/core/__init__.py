@@ -1,2 +1,3 @@
 from .create_user_interactor import CreateUserInteractor
-from .get_user_id_interactor import GetUserInteractor
+from .get_user_id_interactor import GetUserIdInteractor
+from .get_user_profile_interactor import GetUserProfileInteractor

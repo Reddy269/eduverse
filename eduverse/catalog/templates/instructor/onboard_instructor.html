@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+{% comment %} templates/instructors/onboard_instructor.html {% endcomment %}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up your instructor profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5fb; --surface: #ffffff; --ink: #151a33; --muted: #5d6585;
+    --line: #d5d9ea; --accent: #3a46e0; --accent-ink: #ffffff; --chip: #e6e8fb; --error: #c42b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1226; --surface: #181c38; --ink: #eef0ff; --muted: #a2a9cc;
+      --line: #2c3158; --accent: #8b94ff; --accent-ink: #10132b; --chip: #262b55; --error: #ff7b88;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 32px 16px; background: var(--bg); color: var(--ink);
+    font-family: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
+  }
+  main {
+    width: 100%; max-width: 480px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 20px; padding: 40px 32px; text-align: center;
+  }
+  h1 { margin: 0 0 8px; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+  .sub { margin: 0 0 32px; color: var(--muted); }
+
+  .avatar-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 28px; }
+  .avatar {
+    width: 128px; height: 128px; border-radius: 50%; border: 2px dashed var(--line);
+    background: var(--bg) center / cover no-repeat; display: flex; align-items: center; justify-content: center;
+    color: var(--muted); cursor: pointer; transition: border-color .15s;
+  }
+  .avatar:hover, .avatar:focus-visible { border-color: var(--accent); outline: none; }
+  .avatar.has-image { border-style: solid; border-color: var(--accent); }
+  .avatar.has-image svg { display: none; }
+  .avatar svg { width: 40px; height: 40px; }
+  .link-btn { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+  .link-btn:hover { text-decoration: underline; }
+  .link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  .field { margin-bottom: 24px; }
+  label { display: block; margin-bottom: 8px; font-weight: 700; }
+  .opt { font-weight: 500; color: var(--muted); }
+  input[type="text"], textarea, select {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--bg); color: var(--ink); font: inherit; text-align: center;
+  }
+  select { text-align-last: center; cursor: pointer; }
+  textarea { resize: vertical; min-height: 120px; text-align: left; }
+  input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  input.is-default { color: var(--muted); }
+  .hint { display: block; margin-top: 6px; font-size: .85rem; color: var(--muted); }
+  .count { text-align: right; }
+  .error { color: var(--error); font-size: .85rem; margin-top: 6px; min-height: 1.2em; }
+
+
+  .continue {
+    width: 100%; padding: 14px; border: 0; border-radius: 12px; background: var(--accent);
+    color: var(--accent-ink); font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer;
+  }
+  .continue:hover { filter: brightness(1.08); }
+  .continue:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Set up your instructor profile</h1>
+  <p class="sub">Students will see this before they enrol in your courses.</p>
+
+  <form id="onboard" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <!-- Profile picture -->
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatar" role="button" tabindex="0" aria-label="Add profile picture">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>
+        </svg>
+      </div>
+      <button type="button" class="link-btn" id="avatarBtn">Add profile picture</button>
+      <input type="file" name="profile_pic" id="avatarInput" accept="image/*" class="visually-hidden" tabindex="-1">
+      <div class="error" id="avatarError" role="alert"></div>
+    </div>
+
+    <!-- Display name: pre-filled from the backend. The visible input has no name,
+         so only the hidden "displayname" is posted, and it stays empty unless the instructor changes the name. -->
+    <div class="field">
+      <label for="displayNameVisible">Display name</label>
+      <input type="text" id="displayNameVisible" class="is-default" maxlength="60" autocomplete="name"
+             value="{{ default_display_name }}" data-original="{{ default_display_name }}">
+      <input type="hidden" name="displayname" id="displayname" value="">
+      <span class="hint">We’ve filled this in for you. Change it if you want students to see something else.</span>
+    </div>
+
+    <!-- Bio (optional) -->
+    <div class="field">
+      <label for="bio">Bio <span class="opt">(optional: fill later)</span></label>
+      <textarea id="bio" name="bio" maxlength="500" placeholder="Tell students about your experience and how you teach."></textarea>
+      <span class="hint count"><span id="bioCount">0</span>/500</span>
+    </div>
+
+    <!-- Expertise: one category, supplied by the backend -->
+    <div class="field">
+      <label for="expertise">Expertise</label>
+      <select id="expertise" name="expertise">
+        <option value="" selected>Choose a category</option>
+        {% for category in categories %}
+          <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="continue">Continue</button>
+  </form>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  /* Profile picture preview */
+  const avatar = $("avatar"), avatarInput = $("avatarInput"), avatarError = $("avatarError");
+  const pickImage = () => avatarInput.click();
+  avatar.addEventListener("click", pickImage);
+  $("avatarBtn").addEventListener("click", pickImage);
+  avatar.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickImage(); }
+  });
+  avatarInput.addEventListener("change", () => {
+    const file = avatarInput.files[0];
+    avatarError.textContent = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      avatarError.textContent = "Choose an image file (JPG, PNG or WebP).";
+      avatarInput.value = "";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      avatarError.textContent = "Image is larger than 5 MB. Choose a smaller one.";
+      avatarInput.value = "";
+      return;
+    }
+    avatar.style.backgroundImage = "url(" + URL.createObjectURL(file) + ")";
+    avatar.classList.add("has-image");
+    $("avatarBtn").textContent = "Change picture";
+  });
+
+  /* Display name: post a value only when it differs from the backend default */
+  const nameVisible = $("displayNameVisible"), nameHidden = $("displayname");
+  const original = nameVisible.dataset.original.trim();
+
+  // Click/focus: clear the grey default
+  nameVisible.addEventListener("focus", () => {
+    if (nameVisible.classList.contains("is-default")) {
+      nameVisible.value = "";
+      nameVisible.classList.remove("is-default");
+    }
+  });
+
+  // Typing: post only if different from the default
+  nameVisible.addEventListener("input", () => {
+    const typed = nameVisible.value.trim();
+    nameHidden.value = typed === original ? "" : typed;
+  });
+
+  // Leaving the box empty: put the grey default back
+  nameVisible.addEventListener("blur", () => {
+    if (nameVisible.value.trim() === "") {
+      nameVisible.value = original;
+      nameVisible.classList.add("is-default");
+      nameHidden.value = "";
+    } else if (nameVisible.value.trim() === original) {
+      nameVisible.classList.add("is-default");
+    }
+  });
+
+  /* Bio counter */
+  $("bio").addEventListener("input", () => { $("bioCount").textContent = $("bio").value.length; });
+</script>
+</body>
+</html>

@@ -30,6 +30,13 @@ class UserStorage(UserStorageInterface):
     def delete_user(self):
         pass
 
+    def get_user_profile(self,username:str,usertype:str):
+        if usertype == "instructor":
+            instructor = Instructor.objects.get(username = username)
+            return [instructor.username,instructor.email,instructor.name,instructor.dob]
+        return None
+
+
 
 
 """class RequestCreateUserDTO:

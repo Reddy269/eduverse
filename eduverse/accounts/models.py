@@ -5,11 +5,10 @@ from django.db import models
 
 
 class Student(models.Model):
-    user_id = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=150)
+    email = models.EmailField(max_length=150, unique=True)
     dob = models.DateField(null=True, blank=True)
-    username = models.CharField(max_length=100, null=True, blank=True)
+    username = models.CharField(max_length=100, null=True, blank=True , unique=True)
     password = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -18,11 +17,10 @@ class Student(models.Model):
 
 
 class Instructor(models.Model):
-    instructor_id = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=150)
+    email = models.EmailField(max_length=150, unique=True)
     dob = models.DateField(null=True, blank=True)
-    username = models.CharField(max_length=100, null=True, blank=True)
+    username = models.CharField(max_length=100, null=True, blank=True, unique=True)
     password = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
