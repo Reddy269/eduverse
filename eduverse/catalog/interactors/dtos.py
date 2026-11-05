@@ -5,7 +5,7 @@ from datetime import date
 
 from django.core.files.uploadedfile import UploadedFile
 
-from .exceptions import InvalidCategoryException , EmptyTitleException , EmptyCategoryException
+from .exceptions import InvalidCategoryException , EmptyTitleException , EmptyCategoryException , InvalidLessonType
 
 class LessonType(str, Enum):
     VIDEO = "video"
@@ -28,6 +28,41 @@ class CourseStatus(str, Enum):
     PUBLISHED = "published"
     COMPLETED = "completed"
     PENDING = "pending-approval"
+
+
+#lesson-related DTOs
+@dataclass
+class RequestCreateLessonDTO:
+    title: str
+    description: Optional[str]
+    lesson_type: str
+
+    def __post_init__(self):
+        try:
+            self.lesson_type = LessonType(self.lesson_type)
+        except ValueError:
+            InvalidLessonType(self.lesson_type)
+
+class RequestAssignContentToLessonDTO:
+    lesson_id: int
+    content_id: int
+
+class RequestUpdateLessonDTO:
+    title: Optional[str]
+    description: Optional[str]
+    lesson_type: LessonType
+
+
+'''
+class Lesson(models.Model):
+    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null = True, blank = True)
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    description = models.TextField(null=True,blank=True)
+    content = models.OneToOneField(Content, on_delete=models.PROTECT , null=True,blank=True)
+    lesson_type = models.CharField(max_length=100)
+
+'''
 
 
 

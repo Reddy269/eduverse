@@ -49,3 +49,10 @@ class InvalidCourseException(InvalidInputException):
 
 class CourseNotEditableException(InvalidInputException):
     pass
+
+class InvalidLessonTypeException(InvalidInputException):
+    message = 'Please enter a valid lesson type'
+
+    def __init__(self, lesson_type: str) -> None:
+        self.lesson_type = lesson_type
+        super().__init__(f"{self.message}: lesson_type: { lesson_type}")
