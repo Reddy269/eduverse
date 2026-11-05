@@ -1,1 +1,2 @@
 from .course_storage_interface import CourseStorageInterface
+from .category_storage_interface import CategoryStorageInterface

@@ -3,6 +3,7 @@ from django.db.models.functions import Lower
 from catalog.interactors.dtos import LessonType
 
 class Category(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length = 20)
     parent = models.ForeignKey(
         "self",
@@ -37,6 +38,7 @@ course_status = [
 ]
 
 class Course(models.Model):
+    id  = models.AutoField(primary_key=True)
     instructor = models.ForeignKey(InstructorProfile,on_delete=models.CASCADE, null=True,blank=True)
     title = models.CharField(max_length=100,unique=True)
     status = models.CharField(max_length=3, choices=course_status, default="DRA")
@@ -66,15 +68,15 @@ class Content(models.Model):
 
 class Lesson(models.Model):
     instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null = True, blank = True)
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     content = models.OneToOneField(Content, on_delete=models.PROTECT , null=True,blank=True)
-    title = models.CharField(max_length=100)
-    description = models.TextField()
     lesson_type = models.CharField(max_length=100)
 
 class Section(models.Model):
     instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null= True, blank = True)
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     estimated_duration = models.IntegerField(null=True,blank=True)
     description = models.TextField(null=True,blank=True)

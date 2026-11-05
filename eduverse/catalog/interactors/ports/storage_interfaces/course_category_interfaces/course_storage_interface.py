@@ -5,19 +5,20 @@ from catalog.interactors.dtos import CourseDTO, RequestDraftCourseDTO, RequestUp
 
 class CourseStorageInterface(ABC):
     @abstractmethod
-    def create_draft(self, request: RequestDraftCourseDTO) -> bool:
+    # returns the newley created course_id
+    def create_draft(self, request: RequestDraftCourseDTO) -> int:
         pass
     @abstractmethod
     def update_draft(self, request: RequestUpdateDraftDTO) -> bool:
         pass
     @abstractmethod
-    def change_status(self, request) -> bool:
+    def change_status(self, request:CourseDTO) -> bool:
         pass
     @abstractmethod
-    def delete_draft(self, request) -> bool:
+    def delete_draft(self, request: int|str) -> bool:
         pass
     @abstractmethod
-    def get_course(self,request: RequestGetCourseDTO) ->CourseDTO :
+    def get_course(self,request: int|str) ->CourseDTO :
         pass
 
 

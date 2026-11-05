@@ -1,2 +1,2 @@
 from .instructor_storage import InstructorStorageInterface
-from .course_category_interfaces import CourseStorageInterface
+from .course_category_interfaces import CourseStorageInterface , CategoryStorageInterface

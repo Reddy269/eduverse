@@ -12,6 +12,7 @@ class OnboardInstructorInteractor:
 
 
     def get_profile(self,request:RequestInstructorProfileDTO):
+        # rules for RequestInstructorProfileDTO
         profile_details = self.gateway.get_profile(request)
         return profile_details
 
