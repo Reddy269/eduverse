@@ -26,4 +26,6 @@ class CategoryRules:
                 if parent_categories[parent_id] > 4:
                     raise TooManySubCategoriesException
 
+        return True
+
 

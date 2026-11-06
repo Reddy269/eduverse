@@ -1,11 +1,13 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, List, Union, BinaryIO
+from typing import Optional, List
 from datetime import date
 
 from django.core.files.uploadedfile import UploadedFile
 
-from .exceptions import InvalidCategoryException , EmptyTitleException , EmptyCategoryException , InvalidLessonType
+from .exceptions import (EmptyTitleException,
+                         EmptyCategoryException, InvalidLessonTypeException,
+                         InvalidUpdateRequestException, InvalidInputException, )
 
 class LessonType(str, Enum):
     VIDEO = "video"
@@ -29,6 +31,12 @@ class CourseStatus(str, Enum):
     COMPLETED = "completed"
     PENDING = "pending-approval"
 
+class FileType(Enum):
+    VIDEO = (".mp4", ".webm", ".mov")
+    ARTICLE = (".pdf", ".txt", ".md")
+
+
+
 
 #lesson-related DTOs
 @dataclass
@@ -38,10 +46,14 @@ class RequestCreateLessonDTO:
     lesson_type: str
 
     def __post_init__(self):
+
+        if self.title is None:
+            raise InvalidInputException()
+
         try:
             self.lesson_type = LessonType(self.lesson_type)
         except ValueError:
-            InvalidLessonType(self.lesson_type)
+            InvalidLessonTypeException(self.lesson_type)
 
 class RequestAssignContentToLessonDTO:
     lesson_id: int
@@ -50,7 +62,12 @@ class RequestAssignContentToLessonDTO:
 class RequestUpdateLessonDTO:
     title: Optional[str]
     description: Optional[str]
-    lesson_type: LessonType
+    lesson_type: Optional[str]
+    def _post_init__(self):
+        try:
+            self.lesson_type = LessonType(self.lesson_type)
+        except ValueError:
+            InvalidLessonTypeException(self.lesson_type)
 
 
 '''
@@ -64,8 +81,27 @@ class Lesson(models.Model):
 
 '''
 
+#section-related DTOs
+@dataclass
+class RequestAddSectionDTO:
+    title: str
+    description: Optional[str]
+    estimated_duration: Optional[int]
+
+    def _post_init__(self):
+        if not self.title.strip():
+            raise InvalidInputException()
 
 
+'''
+class Section(models.Model):
+    instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null= True, blank = True)
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    estimated_duration = models.IntegerField(null=True,blank=True)
+    description = models.TextField(null=True,blank=True)
+
+'''
 #course-related DTOs
 @dataclass
 class RequestDraftCourseDTO:
@@ -84,9 +120,11 @@ class RequestDraftCourseDTO:
 
 @dataclass
 class RequestUpdateDraftDTO:
+    id: int
+    instructor_id: int
     title: Optional[str]
     overview: Optional[str]
-    prerquisites: Optional[str]
+    prerequisites: Optional[str]
     outcomes: Optional[str]
     overview : Optional[str]
     duration: Optional[str]
@@ -95,6 +133,9 @@ class RequestUpdateDraftDTO:
     preview_content_file: Optional[UploadedFile]
     category: Optional[List[int]]
 
+    def _post_init__(self):
+        if self.id is None:
+            raise InvalidUpdateRequestException
 @dataclass
 class RequestUpdateCategoryDTO:
     category : List[int]
@@ -192,6 +233,48 @@ class ProfileDTO:
     display_name: str
     dob: date
 
+
+#content-related DTOs
+
+@dataclass
+class RequestAddContentDTO:
+    name: str
+    content_type: str
+    content: UploadedFile
+
+    def __post_init__(self):
+
+        def __post_init__(self):
+            if not self.name or not self.name.strip():
+                raise InvalidInputException
+            self.name = self.name.strip()
+
+            if not self.content_type or not str(self.content_type).strip():
+                raise InvalidInputException
+
+            if self.content is None:
+                raise InvalidInputException
+            if not getattr(self.content, "name", None):
+                raise InvalidInputException
+            if self.content.size == 0:
+                raise InvalidInputException
+
+            try:
+                self.content_type = LessonType(self.content_type)
+            except ValueError:
+                raise InvalidLessonTypeException(self.content_type)
+
+
+'''
+def file_path(instance, filename):
+    return f"{instance.content_type}/{filename}"
+
+class Content(models.Model):
+    instructor = models.ForeignKey(InstructorProfile, on_delete=models.PROTECT, null=True,blank=True)
+    name = models.CharField(max_length = 20)
+    content_type = models.CharField(max_length = 20,choices = [(t.value,t.name) for t in LessonType])
+    file = models.FileField(upload_to=file_path)
+'''
 
 
 

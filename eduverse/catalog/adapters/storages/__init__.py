@@ -1,1 +1,2 @@
 from .instructor_storage import InstructorStorage
+from .course_storage import CourseStorage

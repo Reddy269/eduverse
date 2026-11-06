@@ -55,7 +55,15 @@ class Course(models.Model):
 
 class CourseCategory(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    Category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["course", "category"],
+                name="unique_course_category",
+            )
+        ]
 
 def file_path(instance, filename):
     return f"{instance.content_type}/{filename}"
@@ -66,13 +74,14 @@ class Content(models.Model):
     content_type = models.CharField(max_length = 20,choices = [(t.value,t.name) for t in LessonType])
     file = models.FileField(upload_to=file_path)
 
+
 class Lesson(models.Model):
     instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null = True, blank = True)
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField(null=True,blank=True)
     content = models.OneToOneField(Content, on_delete=models.PROTECT , null=True,blank=True)
-    lesson_type = models.CharField(max_length=100)
+    lesson_type = models.CharField(max_length=20, choices= [(t.value, t.name) for t in LessonType])
 
 class Section(models.Model):
     instructor = models.ForeignKey(InstructorProfile, on_delete=models.CASCADE, null= True, blank = True)

@@ -27,7 +27,7 @@ def loginpage(request):
         except PasswordDoesNotMatchUsernameError as e:
             return HttpResponse("Password does not match",status=404)
         if usertype == "instructor":
-            return redirect(f"/catalog/ravi_k")
+            return redirect(f"/catalog/{username}")
         if usertype == "student":
             return redirect(f"student_management/{username}")
 

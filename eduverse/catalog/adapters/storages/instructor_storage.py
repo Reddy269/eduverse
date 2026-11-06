@@ -16,6 +16,12 @@ class InstructorStorage(InstructorStorageInterface):
         )
         instructor_profile.save()
 
+    def does_instructor_exist(self,instructor_id:int) -> bool:
+        if InstructorProfile.objects.get(id = instructor_id).exists():
+            return True
+        else:
+            return False
+
 
 
 '''

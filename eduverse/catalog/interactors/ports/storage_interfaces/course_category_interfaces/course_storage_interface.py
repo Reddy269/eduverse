@@ -20,6 +20,9 @@ class CourseStorageInterface(ABC):
     @abstractmethod
     def get_course(self,request: int|str) ->CourseDTO :
         pass
+    @abstractmethod
+    def does_course_exist(self,course_id:int) -> bool:
+        pass
 
 
 

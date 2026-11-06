@@ -56,3 +56,15 @@ class InvalidLessonTypeException(InvalidInputException):
     def __init__(self, lesson_type: str) -> None:
         self.lesson_type = lesson_type
         super().__init__(f"{self.message}: lesson_type: { lesson_type}")
+
+class InvalidUpdateRequestException(InvalidInputException):
+    message = 'Please enter a valid update request'
+
+    def __init__(self) -> None:
+        super().__init__(self.message)
+
+class InvalidFileException(InvalidInputException):
+    message = 'Please enter a valid file'
+
+    def __init__(self, file_type: str) -> None:
+        super().__init__(f"{self.message},a { file_type} i not valid")
