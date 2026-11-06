@@ -13,6 +13,8 @@
       <sourceFolder url="file://$MODULE_DIR$/eduverse/student_management" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/eduverse/catalog/interactors/application_specific" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/eduverse/gateways" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/eduverse/catalog" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/eduverse/catalog/adapters/storages" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (Django_practice)" jdkType="Python SDK" />

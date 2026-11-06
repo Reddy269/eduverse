@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from dtos import RequestAddSectionDTO
+from catalog.interactors.dtos import RequestAddSectionDTO
 
 
 class SectionStorageInterface(ABC):
