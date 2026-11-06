@@ -8,6 +8,17 @@ class ContentStorage(ContentStorageInterface):
     def add_content(self, request:RequestAddContentDTO):
         content = Content.objects.create(name = request.name, content_type = request.content_type, content = request.content)
 
+    def add_content_to_lesson(self, content_id: int, lesson_id: int):
+        pass
+
+    def remove_content_from_lesson(self, content_id: int, lesson_id: int):
+        pass
+
+    def delete_content(self, content_id: int):
+        pass
+
+    def is_content_in_section(self, content_id: int, section_id: int):
+        pass
 
 
 '''

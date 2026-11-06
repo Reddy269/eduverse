@@ -16,16 +16,31 @@ class CategoryStorage(CategoryStorageInterface):
         return False
 
     def has_parent_category(self, category_id: int) -> bool:
-        pass
+        if Category.objects.get(id=category_id).parent_id is None:
+            return False
+        return True
 
     def get_parent_id(self, category_id: int) -> Optional[int]:
         return Category.objects.get(id=category_id).parent_id
 
-    def get_category_tree(self):
-        pass
+    def get_category_tree(self) -> dict:
+        categories = Category.objects.values("id", "name", "parent_id")
+
+        tree = {}
+        names = {}  # parent id -> parent name
+        for c in categories:
+            if c["parent_id"] is None:
+                tree[c["name"]] = []
+                names[c["id"]] = c["name"]
+
+        for c in categories:
+            if c["parent_id"] is not None:
+                tree[names[c["parent_id"]]].append(c["name"])
+
+        return tree
 
     def remove_category_from_course(self, category_id: int, course_id: int) -> None:
-        pass
+        CourseCategory.objects.get(category = category_id,course =course_id).delete()
 
     def get_categories_of_course(self, category_id: int) -> List[Category]:
         pass
