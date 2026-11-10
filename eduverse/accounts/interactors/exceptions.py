@@ -33,6 +33,13 @@ class InvalidPasswordError(InvalidInputError):
         if message is not None:
             super().__init__(message)
 
+class IdentifierDoesNotExistError(InvalidInputError):
+    def __init__(self, message = None):
+        if message is not None:
+            super().__init__(message)
+
+
+
 
 
 

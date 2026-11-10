@@ -14,4 +14,5 @@ class RegisterEmailInteractor:
 
         # email authentication logic : yet to be thought of and coded
 
-        return request
+
+        return True

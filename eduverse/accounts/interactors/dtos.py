@@ -8,6 +8,8 @@ from prompt_toolkit import enums
 
 EMAIL_PATTERN = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}")
 
+DOB_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
 '''
     "a@b.com": True,
     "first.last+tag@mail.example.co.in": True,
@@ -25,7 +27,11 @@ class UserType(str, Enum):
     STUDENT = "student"
     INSTRUCTOR = "instructor"
 
-DOB_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+class IdentifierType(str, Enum):
+    USERNAME = 'username'
+    EMAIL = 'email'
+
+
 
 
 
@@ -61,11 +67,11 @@ class RequestRegisterUserDTO:
 @dataclass
 class RequestLoginUserDTO:
     usertype: UserType
-    email_or_username: str
+    identifier: str
     password: str
 
     def __post_init__(self):
-        if not self.email_or_username or not self.email_or_username.strip():
+        if not self.identifier or not self.identifier.strip():
             raise ValueError("email or username cannot be empty")
         if not self.password:
             raise ValueError("password cannot be empty")

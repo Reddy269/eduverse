@@ -1,8 +1,9 @@
-from accounts.interactors.core import CreateUserInteractor
+from accounts.interactors.core import CreateUserInteractor, IsEmailRegisteredInteractor
 from accounts.interactors.ports import UserStorageInterface,PasswordHasherInterface,StorageValidationInterface
 from accounts.interactors.dtos import RequestRegisterUserDTO
-from accounts.interactors.exceptions import InvalidUsernameError, InvalidPasswordError
+from accounts.interactors.exceptions import InvalidUsernameError, InvalidPasswordError, EmailAlreadyExistsError
 from . import PasswordRules
+
 
 # call this interactor only after knowing the fact that email is not already registered
 class RegisterUserInteractor:
@@ -11,15 +12,21 @@ class RegisterUserInteractor:
                  password_hasher: PasswordHasherInterface,
                  create_user:CreateUserInteractor,
                  storage_validation:StorageValidationInterface,
-                 password_rules:PasswordRules
+                 password_rules:PasswordRules,
+                 email_check:IsEmailRegisteredInteractor
                  ):
         self.password_hasher = password_hasher
         self.create_user = create_user
         self.storage_validation = storage_validation
         self.password_rules = password_rules
+        self.email_check = email_check
 
 
     def register_user(self,request: RequestRegisterUserDTO):
+        # email validation : this should not happen twice
+        if not self.email_check(request.email, request.user_type):
+            raise EmailAlreadyExistsError("email already exists")
+
         # username rules
         if not request.username or not request.username.split():
             raise InvalidUsernameError('username must not be empty')
