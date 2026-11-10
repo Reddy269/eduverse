@@ -2,10 +2,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 from enum import Enum
-from accounts.interactors.exceptions import InvalidPasswordError, InvalidUserTypeError
+from accounts.interactors.exceptions import InvalidPasswordError, InvalideUserTypeError
 import re
 from prompt_toolkit import enums
-from .exceptions import InvalidUserTypeError,InvalidDOBError
+
 
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -14,7 +14,6 @@ EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 class UserType(str, Enum):
     STUDENT = "student"
     INSTRUCTOR = "instructor"
-    ADMIN = "admin"
 
 
 @dataclass
@@ -31,33 +30,18 @@ class RegisteredUserDTO:
     def __post_init__(self):
         self.usertype = UserType(self.usertype)
 
-@dataclass
-class RequestCreateUserDTO:
-    usertype: UserType
-    email: str
-    username: str
-    password: str
-    confirm_password: str
-
-    def __post_init__(self):
-        self.usertype = UserType(self.usertype)
-
-
 
 @dataclass
-class RequestRegisterEmailDTO:
+class RequestRegisterUserDTO:
     name: str
     email: str
-    UserType: UserType
+    username: str
+    user_type: UserType
     DOB: str
+    password: str
 
 
     # checks if data is valid
-    def __init__(self,username,email,password,UserType,DOB,name):
-        self.name = name
-        self.email = email
-        self.UserType = UserType
-        self.DOB = DOB
     def __post_init__(self):
         try:
             self.UserType = UserType(self.UserType)

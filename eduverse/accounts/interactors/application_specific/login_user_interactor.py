@@ -1,6 +1,6 @@
 from accounts.interactors.dtos import RequestLoginUserDTO
 from accounts.interactors.ports import StorageValidationInterface , PasswordHasherInterface
-from accounts.interactors.exceptions import UsernameDoesNotExistError , PasswordDoesNotMatchUsernameError
+
 
 
 
@@ -15,8 +15,8 @@ class LoginUserInteractor:
 
     def login(self,request:RequestLoginUserDTO):
         if not self.storage_validation.is_email_taken(request.email_or_username,request.usertype):
-            raise UsernameDoesNotExistError()
+            pass
 
         if not self.password_validation.verify_password(request.password):
-            raise PasswordDoesNotMatchUsernameError()
+            pass
         return True

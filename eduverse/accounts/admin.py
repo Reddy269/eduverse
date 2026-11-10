@@ -17,5 +17,5 @@ class InstructorAdmin(admin.ModelAdmin):
 
 @admin.register(Admin)
 class AdminProfileAdmin(admin.ModelAdmin):
-    list_display = ( "name", "email", "created_at")
-    search_fields = ("name", "email")
+    list_display = ( "user_id", "username")
+    search_fields = ( "user_id", "username")

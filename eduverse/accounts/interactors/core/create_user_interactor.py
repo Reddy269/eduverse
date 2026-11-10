@@ -1,5 +1,4 @@
-from accounts.interactors.exceptions import EmailAlreadyExistsError
-from accounts.interactors.dtos import RequestCreateUserDTO, RegisteredUserDTO
+from accounts.interactors.dtos import RequestCreateUserDTO, RegisteredUserDTO, RequestRegisterUserDTO
 from accounts.interactors.ports import PasswordHasherInterface,UserStorageInterface
 
 
@@ -14,7 +13,7 @@ class CreateUserInteractor:
         self.storage = storage
         self.password_hasher = password_hasher
 
-    def create(self, request : RequestCreateUserDTO ):
+    def create(self, request : RequestRegisterUserDTO ):
         hashed_password= self.password_hasher.hash_password(request.password)
         request.password = hashed_password
         return self.storage.create_user(request)

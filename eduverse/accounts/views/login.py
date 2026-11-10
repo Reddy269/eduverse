@@ -4,7 +4,7 @@ from accounts.interactors.application_specific import LoginUserInteractor
 from accounts.adapters.hash import PasswordHasher
 from accounts.adapters.store import StoreValidation
 from accounts.interactors.dtos import RequestLoginUserDTO
-from accounts.interactors.exceptions import UsernameDoesNotExistError, PasswordDoesNotMatchUsernameError
+
 from accounts.interactors.core import GetUserIdInteractor
 
 def loginpage(request):
@@ -22,9 +22,9 @@ def loginpage(request):
         try:
             LoginUserInteractor(store_validation, password_validation).login(login_request)
 
-        except UsernameDoesNotExistError as e:
+        except ValueError as e:
             return HttpResponse("Username does not exist",status=404)
-        except PasswordDoesNotMatchUsernameError as e:
+        except ValueError as e:
             return HttpResponse("Password does not match",status=404)
         if usertype == "instructor":
             return redirect(f"/catalog/{username}")
