@@ -2,7 +2,7 @@ from accounts.interactors.core import CreateUserInteractor, IsEmailRegisteredInt
 from accounts.interactors.ports import UserStorageInterface,PasswordHasherInterface,StorageValidationInterface
 from accounts.interactors.dtos import RequestRegisterUserDTO
 from accounts.interactors.exceptions import InvalidUsernameError, InvalidPasswordError, EmailAlreadyExistsError
-from . import PasswordRules
+from .password_rules import PasswordRules
 
 
 # call this interactor only after knowing the fact that email is not already registered

@@ -346,3 +346,50 @@ body {
   border-radius: 0.7rem;
   background: rgba(255, 80, 120, 0.12);
 }
+
+.popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+}
+
+.popup[hidden] {
+  display: none;
+}
+
+.popup__box {
+  position: relative;
+  max-width: 420px;
+  width: calc(100% - 2rem);
+  padding: 2rem 1.5rem 1.5rem;
+  background: #1c1c28;
+  color: #fff;
+  border-radius: 12px;
+  border-left: 4px solid #ff5a5f;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.popup__message {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.popup__close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.popup__close:hover {
+  color: #ff5a5f;
+}

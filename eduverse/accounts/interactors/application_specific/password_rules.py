@@ -1,4 +1,4 @@
-from interactors.exceptions import InvalidPasswordError
+from accounts.interactors.exceptions import InvalidPasswordError
 import string
 
 class PasswordRules:

@@ -16,20 +16,27 @@ class LoginUserInteractor:
 
     def login(self,request:RequestLoginUserDTO):
         # check if identifier is username or email then accordingly check if they exist ; then carry on:
-        if EMAIL_PATTERN.fullmatch(request.identifier) is None:
+        if EMAIL_PATTERN.fullmatch(request.identifier) is not None:
             identifier_type = IdentifierType.EMAIL
-            if not self.storage_validation.is_username_taken(request.identifier,request.usertype):
-                raise IdentifierDoesNotExistError("Username does not exist")
+            if not self.storage_validation.is_email_taken(request.identifier,request.user_type):
+                raise IdentifierDoesNotExistError("Email does not exist")
 
 
 
         else:
             identifier_type = IdentifierType.USERNAME
-            if not self.storage_validation.is_email_taken(request.identifier,request.usertype):
-                raise IdentifierDoesNotExistError("Email does not exist")
+            if not self.storage_validation.is_username_taken(request.identifier,request.user_type):
+                raise IdentifierDoesNotExistError("Userame does not exist")
 
-        hashed_password = self.get_password(request.identifier, request.usertype, identifier_type)
+        hashed_password = self.get_password(identifier = request.identifier,user_type =  request.user_type,identifier_type= identifier_type)
 
-        if hashed_password != self.password_validation.verify_password(request.password):
+        if not self.password_validation.verify_password(raw_password=request.password,hashed_password = hashed_password):
             return False
-        return True
+        return hashed_password
+
+'''
+    def verify_password(self, raw_password: str) -> bool:
+        if raw_password == self.hash_password(raw_password):
+            return True
+        return False
+'''

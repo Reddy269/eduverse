@@ -15,54 +15,110 @@
     <div class="hero__content">
       <h1 class="hero__title hero__title--sm">Register as {{ role_label|default:"a student" }}</h1>
 
-      <form id="register-form" class="auth-form" method="post">
-        {% csrf_token %}
-        {% if error %}<p class="auth-form__error" role="alert">{{ error }}</p>{% endif %}
+      {% if step == "details" %}
 
+      <!-- Step 2: full form, email prefilled by the backend -->
+      <form id="register-form" class="auth-form" method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="step" value="details">
         <input type="hidden" name="role" value="{{ role|default:'student' }}">
 
         <div class="auth-form__field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="text" autocomplete="email" value="{{ email }}">
+        </div>
+
+        <div class="auth-form__field">
           <label for="name">Full name</label>
-          <input id="name" name="name" type="text" maxlength="100" autocomplete="name" required>
+          <input id="name" name="name" type="text" autocomplete="name" value="{{ name }}">
+        </div>
+
+        <div class="auth-form__field">
+          <label for="dob">Date of birth</label>
+          <input id="dob" name="dob" type="date" autocomplete="bday" value="{{ dob }}">
         </div>
 
         <div class="auth-form__field">
           <label for="username">Username</label>
-          <input id="username" name="username" type="text" maxlength="150" autocomplete="username" required>
+          <input id="username" name="username" type="text" autocomplete="username" value="{{ username }}">
         </div>
-
-        <div class="auth-form__field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" maxlength="150" autocomplete="email" required>
-        </div>
-
-        {% if role == "instructor" %}
-        <div class="auth-form__field">
-          <label for="department">Department (optional)</label>
-          <input id="department" name="department" type="text" maxlength="100">
-        </div>
-        {% endif %}
 
         <div class="auth-form__field">
           <label for="password">Password</label>
-          <input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="At least 8 characters" required>
+          <input id="password" name="password" type="password" autocomplete="new-password">
         </div>
 
         <div class="auth-form__field">
           <label for="confirm_password">Confirm password</label>
-          <input id="confirm_password" name="confirm_password" type="password" maxlength="128" autocomplete="new-password" required>
+          <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password">
         </div>
 
         <button class="auth-form__submit" type="submit">Create account</button>
 
         <p class="auth-form__alt">
-          Already have an account? <a href="/login/">Log in</a>
+          Already have an account? <a href="{% url 'accounts:login' %}">Log in</a>
         </p>
-        <p id="register-message" class="auth-form__error" role="alert" hidden></p>
       </form>
+
+      {% else %}
+
+      <!-- Step 1: email only -->
+      <form id="register-form" class="auth-form" method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="step" value="email">
+        <input type="hidden" name="role" value="{{ role|default:'student' }}">
+
+        <div class="auth-form__field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="text" autocomplete="email" value="{{ email }}">
+        </div>
+
+        <button class="auth-form__submit" type="submit">Continue</button>
+
+        <p class="auth-form__alt">
+          Already have an account? <a href="{% url 'accounts:login' %}">Log in</a>
+        </p>
+      </form>
+
+      {% endif %}
     </div>
   </main>
 
-  <script src="{% static 'accounts/register/main.js' %}"></script>
+  <!-- Popup -->
+  <div id="popup" class="popup" role="alertdialog" aria-modal="true"
+       aria-labelledby="popup-message"
+       data-server-error="{% if error %}{{ error }}{% endif %}" hidden>
+    <div class="popup__box">
+      <button type="button" class="popup__close" id="popup-close" aria-label="Close">&times;</button>
+      <p class="popup__message" id="popup-message"></p>
+    </div>
+  </div>
+
+  <script>
+    var popup = document.getElementById("popup");
+    var popupMsg = document.getElementById("popup-message");
+
+    function showPopup(message) {
+      popupMsg.textContent = message;
+      popup.hidden = false;
+    }
+
+    function hidePopup() {
+      popup.hidden = true;
+    }
+
+    document.getElementById("popup-close").addEventListener("click", hidePopup);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") hidePopup();
+    });
+    popup.addEventListener("click", function (e) {
+      if (e.target === popup) hidePopup();
+    });
+
+    // show the server-side error from Django, if any
+    var serverError = popup.dataset.serverError;
+    if (serverError) showPopup(serverError);
+  </script>
 </body>
 </html>

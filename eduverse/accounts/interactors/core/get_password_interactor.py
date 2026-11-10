@@ -1,5 +1,5 @@
 from accounts.interactors.ports import UserStorageInterface
-from interactors.dtos import UserType , IdentifierType
+from accounts.interactors.dtos import UserType , IdentifierType
 
 
 class GetPasswordInteractor:

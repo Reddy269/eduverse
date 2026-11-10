@@ -2,34 +2,48 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from accounts.interactors.application_specific import LoginUserInteractor
 from accounts.adapters.hash import PasswordHasher
-from accounts.adapters.store import StoreValidation
+from accounts.adapters.store import StoreValidation, UserStorage
 from accounts.interactors.dtos import RequestLoginUserDTO
+from accounts.interactors.core import GetUserIdInteractor , GetPasswordInteractor
+from accounts.adapters.store import storage_validation
 
-from accounts.interactors.core import GetUserIdInteractor
+from accounts.interactors.exceptions import InvalidInputError
+
+
 
 def loginpage(request):
     if request.method == 'POST':
-        username = request.POST.get("username")
+        identifier = request.POST.get("username")
         password = request.POST.get("password")
         usertype = request.POST.get("usertype")
         try:
-            login_request = RequestLoginUserDTO(email_or_username=username, password=password,usertype=usertype)
+            login_request = RequestLoginUserDTO(identifier = identifier, password = password, user_type = usertype)
         except ValueError as e:
             message = str(e)
-            return HttpResponse(message,status=400)
+            return render(request, "accounts/login/login.html", {"error": message}, status=401)
+
+        '''
+        storage_validation:StorageValidationInterface,
+                 password_validation:PasswordHasherInterface,
+                 get_password:GetPasswordInteractor,
+        '''
+
         store_validation = StoreValidation()
         password_validation = PasswordHasher()
+        user_storage = UserStorage()
+        get_password = GetPasswordInteractor(user_storage)
         try:
-            LoginUserInteractor(store_validation, password_validation).login(login_request)
-
-        except ValueError as e:
-            return HttpResponse("Username does not exist",status=404)
+            login_user = LoginUserInteractor(storage_validation = store_validation, password_validation = password_validation, get_password = get_password)
+            login = login_user.login(login_request)
+        except InvalidInputError as e:
+            return render(request, "accounts/login/login.html", {"error": e.message}, status=402)
         except ValueError as e:
             return HttpResponse("Password does not match",status=404)
-        if usertype == "instructor":
-            return redirect(f"/catalog/{username}")
-        if usertype == "student":
-            return redirect(f"student_management/{username}")
+
+        if login == False:
+            return render(request, "accounts/login/login.html", {"error": f"password did not match identifier {login}"}, status=401)
+
+        return HttpResponse(f"Login successful : {login}")
 
 
 

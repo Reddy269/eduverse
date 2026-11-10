@@ -4,7 +4,7 @@ from datetime import datetime
 
 from accounts.interactors.dtos import RequestRegisterUserDTO
 from accounts.interactors.exceptions import InvalidUserTypeError
-from interactors.exceptions import IdentifierDoesNotExistError
+from accounts.interactors.exceptions import IdentifierDoesNotExistError
 
 
 class UserStorage(UserStorageInterface):

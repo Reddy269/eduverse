@@ -18,29 +18,28 @@
 
       <form id="login-form" class="auth-form" method="post" action="" novalidate>
         {% csrf_token %}
-        {% if error %}<p class="auth-form__error" role="alert">{{ error }}</p>{% endif %}
 
         <div class="auth-form__field">
           <label for="usertype">I am a</label>
-          <select id="usertype" name="usertype" required>
+          <select id="usertype" name="usertype">
             <option value="student"
                     data-register="{% url 'accounts:register' usertype='student' %}"
                     data-label="a student" selected>Student</option>
             <option value="instructor"
-                     data-register="{% url 'accounts:register' usertype='instructor' %}"
-                     data-label="an instructor">Instructor</option>
+                    data-register="{% url 'accounts:register' usertype='instructor' %}"
+                    data-label="an instructor">Instructor</option>
             <option value="admin">Admin</option>
           </select>
         </div>
 
         <div class="auth-form__field">
           <label for="username">Username or Email</label>
-          <input id="username" name="username" type="email" autocomplete="username" required>
+          <input id="username" name="username" type="text" autocomplete="username">
         </div>
 
         <div class="auth-form__field">
           <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required>
+          <input id="password" name="password" type="password" autocomplete="current-password">
         </div>
 
         <button class="auth-form__submit" type="submit">Log in</button>
@@ -52,6 +51,16 @@
       </form>
     </div>
   </main>
+
+  <!-- Popup -->
+  <div id="popup" class="popup" role="alertdialog" aria-modal="true"
+       aria-labelledby="popup-message"
+       data-server-error="{% if error %}{{ error }}{% endif %}" hidden>
+    <div class="popup__box">
+      <button type="button" class="popup__close" id="popup-close" aria-label="Close">&times;</button>
+      <p class="popup__message" id="popup-message"></p>
+    </div>
+  </div>
 
   <script>
     var REGISTER = {
@@ -82,6 +91,32 @@
 
     select.addEventListener("change", updateRegister);
     updateRegister();
+
+    // ---- Popup ----
+    var popup = document.getElementById("popup");
+    var popupMsg = document.getElementById("popup-message");
+
+    function showPopup(message) {
+      popupMsg.textContent = message;
+      popup.hidden = false;
+    }
+
+    function hidePopup() {
+      popup.hidden = true;
+    }
+
+    document.getElementById("popup-close").addEventListener("click", hidePopup);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") hidePopup();
+    });
+    popup.addEventListener("click", function (e) {
+      if (e.target === popup) hidePopup();
+    });
+
+    // show the server-side error from Django, if any
+    var serverError = popup.dataset.serverError;
+    if (serverError) showPopup(serverError);
   </script>
 </body>
 </html>
