@@ -2,7 +2,7 @@ from accounts.interactors.ports import UserStorageInterface
 from accounts.models import Student,Instructor
 from datetime import datetime
 
-from interactors.dtos import RequestRegisterUserDTO
+from accounts.interactors.dtos import RequestRegisterUserDTO
 
 
 class UserStorage(UserStorageInterface):

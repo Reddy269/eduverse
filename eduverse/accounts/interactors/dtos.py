@@ -2,62 +2,61 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 from enum import Enum
-from accounts.interactors.exceptions import InvalidPasswordError, InvalideUserTypeError
+from accounts.interactors.exceptions import InvalidUserTypeError, InvalidInputError
 import re
 from prompt_toolkit import enums
 
+EMAIL_PATTERN = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}")
 
+'''
+    "a@b.com": True,
+    "first.last+tag@mail.example.co.in": True,
+    "a@b": False,              # no domain extension
+    "a@@b.com": False,         # double @
+    "a b@c.com": False,        # space
+    "@b.com": False,           # empty local part
+    "a@b.c": False,            # extension too short
+    "a..b@c.com": True,        # known weakness, see below
 
-EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+'''
 
 
 class UserType(str, Enum):
     STUDENT = "student"
     INSTRUCTOR = "instructor"
 
+DOB_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
-@dataclass
-class RegisteredUserDTO:
-    name: str
-    email: str
-    usertype: UserType
 
-    def __init__(self,name,email,usertype):
-        self.name = name
-        self.email = email
-        self.usertype = usertype
 
-    def __post_init__(self):
-        self.usertype = UserType(self.usertype)
 
 
 @dataclass
 class RequestRegisterUserDTO:
-    name: str
-    email: str
-    username: str
     user_type: UserType
-    DOB: str
-    password: str
 
+    email: str
+    name: str
+    dob: datetime
+
+    username: Optional[str] = None
+    password: Optional[str] = None
 
     # checks if data is valid
     def __post_init__(self):
-        try:
-            self.UserType = UserType(self.UserType)
-        except ValueError:
-            raise InvalidUserTypeError()
 
+        try:
+            user_type = UserType(self.user_type.strip().lower())
+        except ValueError:
+            raise InvalidUserTypeError("invalid user type")
         if not self.name.strip():
-            raise ValueError("name cannot be empty")
+            raise InvalidInputError("name cannot be empty")
 
         if not self.email.strip():
-            raise ValueError("email cannot be empty")
+            raise InvalidInputError("email cannot be empty")
 
-        DOB_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-
-        if not isinstance(self.DOB, str) or not DOB_PATTERN.match(self.DOB):
-            raise InvalidDOBError()
+        if not isinstance(self.dob, str) or not DOB_PATTERN.match(self.dob):
+            raise InvalidInputError("invalid date format")
 
 @dataclass
 class RequestLoginUserDTO:

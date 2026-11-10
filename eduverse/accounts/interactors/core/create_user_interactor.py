@@ -1,4 +1,4 @@
-from accounts.interactors.dtos import RequestCreateUserDTO, RegisteredUserDTO, RequestRegisterUserDTO
+from accounts.interactors.dtos import  RequestRegisterUserDTO
 from accounts.interactors.ports import PasswordHasherInterface,UserStorageInterface
 
 
