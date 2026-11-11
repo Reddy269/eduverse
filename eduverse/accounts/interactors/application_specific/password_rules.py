@@ -12,7 +12,7 @@ class PasswordRules:
             raise InvalidPasswordError('password must contain at least 8 characters')
 
         # rule 3: must have atleast one uppercase , 1 number , 1 symbol
-        if (any(char.isdigit() for char in password.strip()) and
+        if not  (any(char.isdigit() for char in password.strip()) and
             any(char.isupper() for char in password.strip()) and
             any(char in string.punctuation for char in password)
                 ) :

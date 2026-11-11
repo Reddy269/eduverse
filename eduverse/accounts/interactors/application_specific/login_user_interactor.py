@@ -25,7 +25,7 @@ class LoginUserInteractor:
 
         else:
             identifier_type = IdentifierType.USERNAME
-            if not self.storage_validation.is_username_taken(request.identifier,request.user_type):
+            if not self.storage_validation.is_username_taken(request.identifier,request.user_type.value):
                 raise IdentifierDoesNotExistError("Userame does not exist")
 
         hashed_password = self.get_password(identifier = request.identifier,user_type =  request.user_type,identifier_type= identifier_type)
@@ -35,6 +35,17 @@ class LoginUserInteractor:
         return hashed_password
 
 '''
+    class GetPasswordInteractor:
+    def __init__(self,
+                 storage: UserStorageInterface,
+                 ):
+        self.storage = storage
+
+    def __call__(self, identifier:str,user_type:UserType,identifier_type:IdentifierType)->str:
+            return self.storage.get_password(identifier,user_type.value,identifier_type.value)
+
+
+
     def verify_password(self, raw_password: str) -> bool:
         if raw_password == self.hash_password(raw_password):
             return True

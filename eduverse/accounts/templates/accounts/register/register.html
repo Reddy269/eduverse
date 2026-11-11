@@ -17,7 +17,7 @@
 
       {% if step == "details" %}
 
-      <!-- Step 2: full form, email prefilled by the backend -->
+      <!-- Step 2: full form, email prefilled and locked when the backend sends it -->
       <form id="register-form" class="auth-form" method="post" novalidate>
         {% csrf_token %}
         <input type="hidden" name="step" value="details">
@@ -26,7 +26,7 @@
         <div class="auth-form__field">
           <label for="email">Email</label>
           <input id="email" name="email" type="text" autocomplete="email"
-                          value="{{ email }}"{% if email %} readonly{% endif %}>
+                 value="{{ email }}"{% if email %} readonly{% endif %}>
         </div>
 
         <div class="auth-form__field">
@@ -85,10 +85,11 @@
     </div>
   </main>
 
-  <!-- Popup -->
+  <!-- Popup (shared by step 1 and step 2) -->
   <div id="popup" class="popup" role="alertdialog" aria-modal="true"
        aria-labelledby="popup-message"
-       data-server-error="{% if error %}{{ error }}{% endif %}" hidden>
+       data-server-error="{% if error %}{{ error }}{% endif %}"
+       data-redirect-url="{{ redirect_url|default:'' }}" hidden>
     <div class="popup__box">
       <button type="button" class="popup__close" id="popup-close" aria-label="Close">&times;</button>
       <p class="popup__message" id="popup-message"></p>
@@ -105,7 +106,10 @@
     }
 
     function hidePopup() {
+      if (popup.hidden) return;   // Escape pressed while no popup is showing
       popup.hidden = true;
+      var url = popup.dataset.redirectUrl;
+      if (url) window.location.href = url;
     }
 
     document.getElementById("popup-close").addEventListener("click", hidePopup);

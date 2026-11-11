@@ -16,11 +16,15 @@ def loginpage(request):
         identifier = request.POST.get("username")
         password = request.POST.get("password")
         usertype = request.POST.get("usertype")
+
         try:
             login_request = RequestLoginUserDTO(identifier = identifier, password = password, user_type = usertype)
         except ValueError as e:
             message = str(e)
             return render(request, "accounts/login/login.html", {"error": message}, status=401)
+
+
+
 
         '''
         storage_validation:StorageValidationInterface,
@@ -32,11 +36,13 @@ def loginpage(request):
         password_validation = PasswordHasher()
         user_storage = UserStorage()
         get_password = GetPasswordInteractor(user_storage)
+        login_user = LoginUserInteractor(storage_validation=store_validation, password_validation=password_validation,
+                                         get_password=get_password)
         try:
-            login_user = LoginUserInteractor(storage_validation = store_validation, password_validation = password_validation, get_password = get_password)
             login = login_user.login(login_request)
         except InvalidInputError as e:
             return render(request, "accounts/login/login.html", {"error": e.message}, status=402)
+
         except ValueError as e:
             return HttpResponse("Password does not match",status=404)
 

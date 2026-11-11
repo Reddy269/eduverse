@@ -32,6 +32,10 @@ class StoreValidation(StorageValidationInterface):
         return True
 
 
+'''
+        if not self.storage_validation.is_username_taken(request.username,request.user_type.value):
+            raise InvalidUsernameError('username already taken')
+'''
 
 
 
