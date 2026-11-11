@@ -1,5 +1,5 @@
 from accounts.interactors.dtos import RequestLoginUserDTO, EMAIL_PATTERN, IdentifierType
-from accounts.interactors.ports import StorageValidationInterface , PasswordHasherInterface
+from accounts.interactors.ports import StorageValidationInterface , PasswordHasherInterface, UserStorageInterface
 from accounts.interactors.exceptions import IdentifierDoesNotExistError
 from accounts.interactors.core import GetPasswordInteractor
 
@@ -9,10 +9,12 @@ class LoginUserInteractor:
                  storage_validation:StorageValidationInterface,
                  password_validation:PasswordHasherInterface,
                  get_password:GetPasswordInteractor,
+                 storage: UserStorageInterface,
                  ):
         self.storage_validation = storage_validation
         self.password_validation = password_validation
         self.get_password = get_password
+        self.storage = storage
 
     def login(self,request:RequestLoginUserDTO):
         # check if identifier is username or email then accordingly check if they exist ; then carry on:
@@ -32,7 +34,7 @@ class LoginUserInteractor:
 
         if not self.password_validation.verify_password(raw_password=request.password,hashed_password = hashed_password):
             return False
-        return hashed_password
+        return self.storage.get_user_id(identifier=request.identifier,user_type= request.user_type.value,identifier_type=identifier_type.value)
 
 '''
     class GetPasswordInteractor:

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from accounts.interactors.application_specific import LoginUserInteractor
 from accounts.adapters.hash import PasswordHasher
 from accounts.adapters.store import StoreValidation, UserStorage
-from accounts.interactors.dtos import RequestLoginUserDTO
+from accounts.interactors.dtos import RequestLoginUserDTO , UserType
 from accounts.interactors.core import GetUserIdInteractor , GetPasswordInteractor
 from accounts.adapters.store import storage_validation
 
@@ -37,19 +37,22 @@ def loginpage(request):
         user_storage = UserStorage()
         get_password = GetPasswordInteractor(user_storage)
         login_user = LoginUserInteractor(storage_validation=store_validation, password_validation=password_validation,
-                                         get_password=get_password)
+                                         get_password=get_password,storage=user_storage)
         try:
-            login = login_user.login(login_request)
+            user_id = login_user.login(login_request)
         except InvalidInputError as e:
             return render(request, "accounts/login/login.html", {"error": e.message}, status=402)
 
         except ValueError as e:
             return HttpResponse("Password does not match",status=404)
 
-        if login == False:
+        if user_id == False:
             return render(request, "accounts/login/login.html", {"error": f"password did not match identifier {login}"}, status=401)
 
-        return HttpResponse(f"Login successful : {login}")
+        if login_request.user_type == UserType.INSTRUCTOR :
+            return redirect(f"/catalog/{user_id}/")
+
+        return HttpResponse(f"Login successful : {user_id}")
 
 
 

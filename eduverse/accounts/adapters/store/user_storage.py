@@ -54,7 +54,7 @@ class UserStorage(UserStorageInterface):
             if identifier_type == "username":
                 instructor = Instructor.objects.get(username = identifier)
             elif identifier_type == "email":
-                instructor = Student.objects.get(email = identifier)
+                instructor = Instructor.objects.get(email = identifier)
             else:
                 raise IdentifierDoesNotExistError('invalid identifier type')
             return instructor.user_id

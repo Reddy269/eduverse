@@ -20,6 +20,7 @@ class Category(models.Model):
         ]
 
 class InstructorProfile(models.Model):
+    id = models.CharField(max_length = 20,unique = True,primary_key=True)
     username = models.CharField(max_length = 20,unique = True,null = True,blank = True)
     email = models.CharField(max_length = 20,unique = True,null = True,blank = True)
     dob = models.DateField(null=True,blank=True)
