@@ -74,10 +74,11 @@ class RequestLoginUserDTO:
     password: str
 
     def __post_init__(self):
-        try:
-            self.user_type = UserType(self.user_type.strip().lower())
-        except (ValueError, AttributeError):
-            raise InvalidUserTypeError("invalid user type")
+        if not isinstance(self.user_type, UserType):
+            try:
+                self.user_type = UserType(self.user_type.strip().lower())
+            except (ValueError, AttributeError):
+                raise InvalidUserTypeError("invalid user type")
 
         if not self.identifier :
             raise ValueError("email or username cannot be empty")
