@@ -5,8 +5,8 @@ from datetime import date
 
 from django.core.files.uploadedfile import UploadedFile
 
-from .exceptions import (EmptyTitleException,
-                         EmptyCategoryException, InvalidLessonTypeException,
+from .exceptions import (InvalidTitleException,
+                         InvalidCategoryException, InvalidLessonTypeException,
                          InvalidUpdateRequestException, InvalidInputException, )
 
 class LessonType(str, Enum):
@@ -114,9 +114,9 @@ class RequestDraftCourseDTO:
 
     def __post_init__(self):
         if self.category is None:
-            raise EmptyCategoryException()
+            raise InvalidCategoryException(category_id = None ,message = "enter atleast one valid category" )
         if self.title is None:
-            raise EmptyTitleException()
+            raise InvalidTitleException(title = None)
 
 @dataclass
 class RequestUpdateDraftDTO:
@@ -210,21 +210,18 @@ class Course(models.Model):
 #Onboarding-related DTOs
 @dataclass
 class RequestOnboardInstructorDTO:
+    id: str
     username: str
     display_name: str
     email: str
     dob: date
-    bio: str
-    category: str
-    dp_file: Optional[UploadedFile]
+    bio: Optional[str] | None
+    category: Optional[str] | None
+    dp_picture: Optional[UploadedFile] | None
 
 
     def __post_init__(self):
         pass
-
-@dataclass
-class RequestInstructorProfileDTO:
-    username: str
 
 @dataclass
 class ProfileDTO:

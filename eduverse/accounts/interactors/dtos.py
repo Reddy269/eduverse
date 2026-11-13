@@ -31,6 +31,23 @@ class IdentifierType(str, Enum):
     USERNAME = 'username'
     EMAIL = 'email'
 
+@dataclass
+class UserProfileDTO:
+    user_id: str
+    name: str
+    email: str
+    username: str
+    dob: date
+
+'''
+user_id = models.CharField(max_length=16, unique=True, null=True, blank=True, editable=False)
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=150, unique=True)
+    dob = models.DateField(null=True, blank=True)
+    username = models.CharField(max_length=100, null=True, blank=True, unique=True)
+    password = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+'''
 
 
 

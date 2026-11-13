@@ -19,7 +19,7 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_user_profile(self,user_id: int,user_type:str):
+    def get_user_profile(self,user_id: str,user_type:str):
         pass
 
     @abstractmethod

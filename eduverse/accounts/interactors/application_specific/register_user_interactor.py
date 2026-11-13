@@ -1,8 +1,7 @@
 from accounts.interactors.core import CreateUserInteractor, IsEmailRegisteredInteractor
 from accounts.interactors.ports import UserStorageInterface,PasswordHasherInterface,StorageValidationInterface
-from accounts.interactors.dtos import RequestRegisterUserDTO
-from accounts.interactors.exceptions import InvalidUsernameError, InvalidPasswordError, EmailAlreadyExistsError, \
-    InvalidInputError
+from accounts.interactors.dtos import RequestRegisterUserDTO , EMAIL_PATTERN
+from accounts.interactors.exceptions import InvalidUsernameError, InvalidPasswordError, EmailAlreadyExistsError, InvalidEmailError
 from .password_rules import PasswordRules
 
 
@@ -22,7 +21,11 @@ class RegisterUserInteractor:
 
 
     def register_user(self,request: RequestRegisterUserDTO):
-        # email validation : this should not happen twice
+        # checks if email is in a valid format:
+        if EMAIL_PATTERN.fullmatch(request.email) is None:
+            raise InvalidEmailError("invalid email ")
+
+        #checks if email already exists
         if self.email_check(request.email, request.user_type):
             raise EmailAlreadyExistsError("email already exists")
 
@@ -30,9 +33,9 @@ class RegisterUserInteractor:
             # if username field is empty
         if not request.username or not request.username.split():
             raise InvalidUsernameError('username must not be empty')
-            #if username is same as email raise error
+            #username should not be in the format of an email
         if request.username.strip() == request.email.strip():
-            raise InvalidUsernameError('username should not be the same as your email')
+            raise InvalidUsernameError('username should not be resemble email format')
             # if username is taken
         if self.storage_validation.is_username_taken(request.username,request.user_type.value):
             raise InvalidUsernameError('username already taken')

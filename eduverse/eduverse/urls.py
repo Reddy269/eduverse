@@ -26,8 +26,6 @@ urlpatterns = [
     path('catalog/', include('catalog.urls')),
     path('student_management/', include('student_management.urls')),
     path('',views.homepage),
-    path('test/upload/',views.uploadtest),
-    path('test/get/',views.gettest),
 ]
 
 if settings.DEBUG:

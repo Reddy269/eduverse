@@ -11,18 +11,28 @@ class InvalidInputException(Exception):
         super().__init__(self.message)          # makes str(e) return the message
 
 
+# onboarding input errors
+
 class InvalidCategoryException(InvalidInputException):
     message = "The draft input has an invalid category"
 
-    def __init__(self, category_id: int) -> None:
+    def __init__(self, category_id: int|None , message: str|None) -> None:
         self.category_id = category_id
+        if message is not None:
+            self.message = message
+        if category_id is None:
+            super().__init__(self.message)
         super().__init__(f"{self.message}: category_id: {category_id}")
 
-class EmptyTitleException(InvalidInputException):
+class InvalidTitleException(InvalidInputException):
     message = 'please enter a valid title'
 
-class EmptyCategoryException(InvalidInputException):
-    message = 'enter atleast one valid category'
+    def __init__(self, title: str|None) ->None:
+        if title is not None:
+            self.message = "title is empty , please enter a valid title"
+            super().__init__(f"{self.message}")
+        super().__init__(f"{self.message}: title: {title}")
+
 
 class IncompleteCategoryException(InvalidInputException):
     message = 'please enter complete category path'

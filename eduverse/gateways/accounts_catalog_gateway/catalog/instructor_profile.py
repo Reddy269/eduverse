@@ -1,22 +1,16 @@
 import profile
 
 from catalog.interactors.ports.gateway_interfaces import InstructorProfileInterface
-from catalog.interactors.dtos import RequestInstructorProfileDTO , ProfileDTO
+from catalog.interactors.dtos import ProfileDTO
+from accounts.interactors.core import GetUserProfileInteractor
 from accounts.adapters.store import UserStorage
 
 
 class InstructorProfile(InstructorProfileInterface):
-    def get_profile(self,request:RequestInstructorProfileDTO):
-        username = request.username
+    def get_profile(self,request:str):
         storage = UserStorage()
-        profile_details_list = storage.get_user_profile(username,"instructor")
-        profile_details = ProfileDTO(
-                                username = profile_details_list[0],
-                                email = profile_details_list[1],
-                                display_name = profile_details_list[2],
-                                dob = profile_details_list[3],
-                                )
-        return profile_details
+        get_profile_interactor = GetUserProfileInteractor(storage)
+        return get_profile_interactor.get_user_profile(request,'instructor')
 
     def update_profile(self,request):
         pass

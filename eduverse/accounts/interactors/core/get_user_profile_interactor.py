@@ -1,5 +1,5 @@
 from accounts.interactors.ports import UserStorageInterface
-
+from accounts.interactors.dtos import UserProfileDTO
 
 
 class GetUserProfileInteractor:
@@ -7,5 +7,5 @@ class GetUserProfileInteractor:
                  store: UserStorageInterface,
                  ):
         self.store = store
-    def get_user_profile(self,username_or_email:str,usertype:str):
-        return self.store.get_user_profile(username_or_email)
+    def get_user_profile(self,user_id:str,usertype:str) -> UserProfileDTO:
+        return self.store.get_user_profile(user_id,usertype)

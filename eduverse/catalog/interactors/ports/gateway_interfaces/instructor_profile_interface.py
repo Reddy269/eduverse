@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 
-from catalog.interactors.dtos import RequestInstructorProfileDTO
 
 
 class InstructorProfileInterface(ABC):
     @abstractmethod
-    def get_profile(self,request:RequestInstructorProfileDTO):
+    def get_profile(self,request:str):
         pass
     @abstractmethod
     def update_profile(self,request):

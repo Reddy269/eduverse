@@ -13,18 +13,18 @@ class CategoryRules:
 
         for category_id in category:
             if not self.category_storage.is_valid_category(category_id):
-                raise InvalidCategoryException(category_id)
+                raise InvalidCategoryException(category_id = category_id, message = "invalid category_id ; does not exist")
 
             parent_id = self.category_storage.get_parent_id(category_id)
             if parent_id is None:
-                raise IncompleteCategoryException(category_id)
+                raise InvalidCategoryException(category_id = category_id, message = "category should be a sub-category not a parent")
             if parent_id not in parent_categories:
                 if parent_count == 0:
-                    raise TooManyCategoriesException
+                    raise TooManyCategoriesException("course can only belong upto 2 main categories")
             else:
                 parent_categories[parent_id] = parent_categories.get(parent_id, 0) + 1
                 if parent_categories[parent_id] > 4:
-                    raise TooManySubCategoriesException
+                    raise TooManySubCategoriesException(f"a course can only have upt 4 categories under a main category")
 
         return True
 
