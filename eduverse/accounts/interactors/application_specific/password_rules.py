@@ -3,7 +3,7 @@ import string
 
 class PasswordRules:
 
-    def __call__(self, password:str , email:str) -> bool:
+    def __call__(self, password:str , email:str, username:str) -> bool:
         # rule 1: should not have any space in between them:
         if any(ch.isspace() for ch in password.strip()):
             raise InvalidPasswordError('password must contain only letters, numbers, dots and dashes, no whitespace')
@@ -18,7 +18,9 @@ class PasswordRules:
                 ) :
             raise InvalidPasswordError('password must contain atleast one uppercase letter, number and symbol')
 
-        # rule 4: password must not be the email itself
+        # rule 4: password must not be the email itself nor the username
         if password.strip().lower() == email.strip().lower():
             raise InvalidPasswordError('password must not be the same as email')
+        if password.strip().lower() == username.strip().lower():
+            raise InvalidPasswordError('password must not be the same as username')
 

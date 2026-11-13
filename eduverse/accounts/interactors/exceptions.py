@@ -57,3 +57,8 @@ class EmptyFieldError(Exception):
 class UsernameorEmailDoesNotExistError(Exception):
     message = "Invalid username or Email"
 
+class UsernameOrEmailAlreadyExistsError(Exception):
+    message = " Username or Email already exists"
+    def __init__(self, message):
+        self.message = message
+

@@ -34,8 +34,8 @@ class RegisterUserInteractor:
         if not request.username or not request.username.split():
             raise InvalidUsernameError('username must not be empty')
             #username should not be in the format of an email
-        if request.username.strip() == request.email.strip():
-            raise InvalidUsernameError('username should not be resemble email format')
+        if EMAIL_PATTERN.fullmatch(request.username) is not None:
+            raise InvalidUsernameError('username should not resemble email format')
             # if username is taken
         if self.storage_validation.is_username_taken(request.username,request.user_type.value):
             raise InvalidUsernameError('username already taken')
@@ -43,9 +43,11 @@ class RegisterUserInteractor:
             #checks if exists
         if not request.password or not request.password.strip():
             raise InvalidPasswordError('password must not be empty')
-            #checks password rules
 
-        self.password_rules(password = request.password,email = request.email)
+            #checks password rules
+            #1)
+
+        self.password_rules(password = request.password,email = request.email,username=request.username)
 
 
         # hashes password and creates an entry
